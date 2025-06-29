@@ -27,6 +27,11 @@ def get_pseudocode(instructions):
             mnemonic = i.mnemonic
             op_str = i.op_str
 
+            if "rip" in op_str:
+                next_instruction = instructions[instructions.index(i) + 1]
+                next_instruction_addr = next_instruction.address
+                op_str = op_str.replace("rip", hex(next_instruction_addr))
+
             if mnemonic == 'mov':
                 line = f"{op_str.split(',')[0].strip()} = {op_str.split(',')[1].strip()}"
             elif mnemonic == 'add':
