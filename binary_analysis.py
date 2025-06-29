@@ -40,7 +40,13 @@ def get_pseudocode(instructions):
                 line = f"{op_str.split(',')[0].strip()} -= {op_str.split(',')[1].strip()}"
 
             elif mnemonic == 'xor':
-                line = f"{op_str.split(',')[0].strip()} ^= {op_str.split(',')[1].strip()}"
+                left = op_str.split(',')[0].strip()
+                right = op_str.split(',')[1].strip()
+
+                if left == right:
+                    line = f"{left} = 0"
+                else:
+                    line = f"{left} ^= {right}"
 
             elif mnemonic == 'and':
                 line = f"{op_str.split(',')[0].strip()} &= {op_str.split(',')[1].strip()}"
