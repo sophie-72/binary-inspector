@@ -1,9 +1,7 @@
 import sys
 
-from elftools.elf.descriptions import describe_reloc_type
-from elftools.elf.elffile import ELFFile
 from capstone import *
-from elftools.elf.relocation import RelocationSection
+from elftools.elf.elffile import ELFFile
 
 
 def process_file(filename):
