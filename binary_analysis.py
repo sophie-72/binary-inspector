@@ -112,6 +112,14 @@ def translate_instructions(instructions):
         if "byte ptr [" in line:
             line = line.replace("byte ptr [", "memory[")
 
+        hex_character = re.search("0x[0-9a-f]{2}$", line)
+        if hex_character:
+            decimal_value = int(hex_character.group(), 16)
+
+            if 32 <= decimal_value <= 126:
+                character = chr(decimal_value)
+                line = line.replace(hex_character.group(), character)
+
         translated_instructions.append(line)
     return translated_instructions
 
