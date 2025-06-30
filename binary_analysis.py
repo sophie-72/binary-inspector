@@ -22,79 +22,85 @@ def get_file_instructions(filename):
         return instructions
 
 
+def translate_operation(instruction, instructions):
+    mnemonic = instruction.mnemonic
+    op_str = instruction.op_str
+
+    two_value_operations = {
+        "mov": lambda l, r: f"{l} = {r}",
+        "add": lambda l, r: f"{l} += {r}",
+        "sub": lambda l, r: f"{l} -= {r}",
+        "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} ^= {r}"),
+        "and": lambda l, r: f"{l} &= {r}",
+        "or": lambda l, r: f"{l} |= {r}",
+    }
+
+    if mnemonic in two_value_operations:
+        left, right = map(str.strip, op_str.split(","))
+        line = two_value_operations[mnemonic](left, right)
+    elif mnemonic == "lea":
+        dest, src = op_str.split(", ")
+        line = f"{dest.strip()} = {src.strip()[1:-1]}"
+    elif mnemonic == "call":
+        line = f"call {op_str.strip()}"
+    elif mnemonic == "ret":
+        line = "return"
+    elif mnemonic == "cmp":
+        line = f"compare {op_str.strip()}"
+    elif mnemonic == "je":
+        previous_instruction = instructions[instructions.index(instruction) - 1]
+
+        if previous_instruction.mnemonic in "cmp":
+            left = previous_instruction.op_str.split(",")[0]
+            right = previous_instruction.op_str.split(",")[1]
+
+            line = f"if ({left} == {right}) goto {op_str.strip()}"
+        elif previous_instruction.mnemonic in "test":
+            left = previous_instruction.op_str.split(",")[0]
+            right = previous_instruction.op_str.split(",")[1]
+
+            line = f"if (({left} & {right}) == 0) goto {op_str.strip()}"
+        else:
+            line = f"if (condition) goto {op_str.strip()}"
+    elif mnemonic == "jne":
+        previous_instruction = instructions[instructions.index(instruction) - 1]
+
+        if previous_instruction.mnemonic in "cmp":
+            left = previous_instruction.op_str.split(",")[0]
+            right = previous_instruction.op_str.split(",")[1]
+
+            line = f"if ({left} != {right}) goto {op_str.strip()}"
+        elif previous_instruction.mnemonic in "test":
+            left = previous_instruction.op_str.split(",")[0]
+            right = previous_instruction.op_str.split(",")[1]
+
+            line = f"if (({left} & {right}) != 0) goto {op_str.strip()}"
+        else:
+            line = f"if (!condition) goto {op_str.strip()}"
+    elif mnemonic == "jmp":
+        line = f"goto {op_str.strip()}"
+    elif mnemonic == "test":
+        line = f"test {op_str.strip()}"
+    elif mnemonic == "nop":
+        line = "no operation"
+    elif mnemonic == "hlt":
+        line = "halt"
+    elif mnemonic == "endbr64":
+        line = "end branch"
+    elif mnemonic == "push":
+        line = f"stack.push({op_str.strip()})"
+    elif mnemonic == "pop":
+        line = f"{op_str.strip()} = stack.pop()"
+    else:
+        line = f"{mnemonic}"
+
+    return line
+
+
 def translate_instructions(instructions):
     translated_instructions = []
     for i in instructions:
-        mnemonic = i.mnemonic
-        op_str = i.op_str
-
-        two_value_operations = {
-            "mov": lambda l, r: f"{l} = {r}",
-            "add": lambda l, r: f"{l} += {r}",
-            "sub": lambda l, r: f"{l} -= {r}",
-            "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} ^= {r}"),
-            "and": lambda l, r: f"{l} &= {r}",
-            "or": lambda l, r: f"{l} |= {r}",
-        }
-
-        if mnemonic in two_value_operations:
-            left, right = map(str.strip, op_str.split(","))
-            line = two_value_operations[mnemonic](left, right)
-        elif mnemonic == "lea":
-            dest, src = op_str.split(", ")
-            line = f"{dest.strip()} = {src.strip()[1:-1]}"
-        elif mnemonic == "call":
-            line = f"call {op_str.strip()}"
-        elif mnemonic == "ret":
-            line = "return"
-        elif mnemonic == "cmp":
-            line = f"compare {op_str.strip()}"
-        elif mnemonic == "je":
-            previous_instruction = instructions[instructions.index(i) - 1]
-
-            if previous_instruction.mnemonic in "cmp":
-                left = previous_instruction.op_str.split(",")[0]
-                right = previous_instruction.op_str.split(",")[1]
-
-                line = f"if ({left} == {right}) goto {op_str.strip()}"
-            elif previous_instruction.mnemonic in "test":
-                left = previous_instruction.op_str.split(",")[0]
-                right = previous_instruction.op_str.split(",")[1]
-
-                line = f"if (({left} & {right}) == 0) goto {op_str.strip()}"
-            else:
-                line = f"if (condition) goto {op_str.strip()}"
-        elif mnemonic == "jne":
-            previous_instruction = instructions[instructions.index(i) - 1]
-
-            if previous_instruction.mnemonic in "cmp":
-                left = previous_instruction.op_str.split(",")[0]
-                right = previous_instruction.op_str.split(",")[1]
-
-                line = f"if ({left} != {right}) goto {op_str.strip()}"
-            elif previous_instruction.mnemonic in "test":
-                left = previous_instruction.op_str.split(",")[0]
-                right = previous_instruction.op_str.split(",")[1]
-
-                line = f"if (({left} & {right}) != 0) goto {op_str.strip()}"
-            else:
-                line = f"if (!condition) goto {op_str.strip()}"
-        elif mnemonic == "jmp":
-            line = f"goto {op_str.strip()}"
-        elif mnemonic == "test":
-            line = f"test {op_str.strip()}"
-        elif mnemonic == "nop":
-            line = "no operation"
-        elif mnemonic == "hlt":
-            line = "halt"
-        elif mnemonic == "endbr64":
-            line = "end branch"
-        elif mnemonic == "push":
-            line = f"stack.push({op_str.strip()})"
-        elif mnemonic == "pop":
-            line = f"{op_str.strip()} = stack.pop()"
-        else:
-            line = f"{mnemonic}"
+        line = translate_operation(i, instructions)
 
         if "rip" in line:
             next_instruction = instructions[instructions.index(i) + 1]
