@@ -40,8 +40,8 @@
 0x1118:	ret		; return
 0x1119:	nop	dword ptr [rax]	; no operation
 0x1120:	endbr64		; end branch
-0x1124:	cmp	byte ptr [rip + 0x2f1d], 0	; compare byte ptr [0x4048], 0
-0x112b:	jne	0x1160	; if (byte ptr [rip + 0x2f1d] !=  0) goto 0x1160
+0x1124:	cmp	byte ptr [rip + 0x2f1d], 0	; compare memory[0x4048], 0
+0x112b:	jne	0x1160	; if (memory[0x404a] !=  0) goto 0x1160
 0x112d:	push	rbp	; stack.push(rbp)
 0x112e:	cmp	qword ptr [rip + 0x2eaa], 0	; compare memory[0x3fe0], 0
 0x1136:	mov	rbp, rsp	; rbp = rsp
@@ -49,7 +49,7 @@
 0x113b:	mov	rdi, qword ptr [rip + 0x2eee]	; rdi = memory[0x4030]
 0x1142:	call	qword ptr [rip + 0x2e98]	; call memory[0x3fe0]
 0x1148:	call	0x10b0	; call 0x10b0
-0x114d:	mov	byte ptr [rip + 0x2ef4], 1	; byte ptr [0x4048] = 1
+0x114d:	mov	byte ptr [rip + 0x2ef4], 1	; memory[0x4048] = 1
 0x1154:	pop	rbp	; rbp = stack.pop()
 0x1155:	ret		; return
 0x1156:	nop	word ptr cs:[rax + rax]	; no operation
@@ -65,31 +65,31 @@
 0x1186:	call	0x1070	; call 0x1070
 0x118b:	mov	qword ptr [rbp - 0x10], rax	; memory[rbp - 0x10] = rax
 0x118f:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
-0x1193:	mov	byte ptr [rax], 0x70	; byte ptr [rax] = 0x70
+0x1193:	mov	byte ptr [rax], 0x70	; memory[rax] = 0x70
 0x1196:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x119a:	add	rax, 1	; rax += 1
-0x119e:	mov	byte ptr [rax], 0x61	; byte ptr [rax] = 0x61
+0x119e:	mov	byte ptr [rax], 0x61	; memory[rax] = 0x61
 0x11a1:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11a5:	add	rax, 2	; rax += 2
-0x11a9:	mov	byte ptr [rax], 0x73	; byte ptr [rax] = 0x73
+0x11a9:	mov	byte ptr [rax], 0x73	; memory[rax] = 0x73
 0x11ac:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11b0:	add	rax, 3	; rax += 3
-0x11b4:	mov	byte ptr [rax], 0x73	; byte ptr [rax] = 0x73
+0x11b4:	mov	byte ptr [rax], 0x73	; memory[rax] = 0x73
 0x11b7:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11bb:	add	rax, 4	; rax += 4
-0x11bf:	mov	byte ptr [rax], 0x77	; byte ptr [rax] = 0x77
+0x11bf:	mov	byte ptr [rax], 0x77	; memory[rax] = 0x77
 0x11c2:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11c6:	add	rax, 5	; rax += 5
-0x11ca:	mov	byte ptr [rax], 0x6f	; byte ptr [rax] = 0x6f
+0x11ca:	mov	byte ptr [rax], 0x6f	; memory[rax] = 0x6f
 0x11cd:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11d1:	add	rax, 6	; rax += 6
-0x11d5:	mov	byte ptr [rax], 0x72	; byte ptr [rax] = 0x72
+0x11d5:	mov	byte ptr [rax], 0x72	; memory[rax] = 0x72
 0x11d8:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11dc:	add	rax, 7	; rax += 7
-0x11e0:	mov	byte ptr [rax], 0x64	; byte ptr [rax] = 0x64
+0x11e0:	mov	byte ptr [rax], 0x64	; memory[rax] = 0x64
 0x11e3:	mov	rax, qword ptr [rbp - 0x10]	; rax = memory[rbp - 0x10]
 0x11e7:	add	rax, 8	; rax += 8
-0x11eb:	mov	byte ptr [rax], 0	; byte ptr [rax] = 0
+0x11eb:	mov	byte ptr [rax], 0	; memory[rax] = 0
 0x11ee:	mov	edi, 9	; edi = 9
 0x11f3:	call	0x1070	; call 0x1070
 0x11f8:	mov	qword ptr [rbp - 8], rax	; memory[rbp - 8] = rax

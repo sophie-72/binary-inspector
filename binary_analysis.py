@@ -28,19 +28,6 @@ def translate_instructions(instructions):
         mnemonic = i.mnemonic
         op_str = i.op_str
 
-        if "rip" in op_str:
-            next_instruction = instructions[instructions.index(i) + 1]
-            next_instruction_addr = next_instruction.address
-            op_str = op_str.replace("rip", hex(next_instruction_addr))
-
-        hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", op_str)
-        if hex_addition:
-            result = eval(hex_addition.group())
-            op_str = op_str.replace(hex_addition.group(), hex(result))
-
-        if "qword ptr [" in op_str:
-            op_str = op_str.replace("qword ptr [", "memory[")
-
         two_value_operations = {
             "mov": lambda l, r: f"{l} = {r}",
             "add": lambda l, r: f"{l} += {r}",
@@ -108,6 +95,22 @@ def translate_instructions(instructions):
             line = f"{op_str.strip()} = stack.pop()"
         else:
             line = f"{mnemonic}"
+
+        if "rip" in line:
+            next_instruction = instructions[instructions.index(i) + 1]
+            next_instruction_addr = next_instruction.address
+            line = line.replace("rip", hex(next_instruction_addr))
+
+        hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
+        if hex_addition:
+            result = eval(hex_addition.group())
+            line = line.replace(hex_addition.group(), hex(result))
+
+        if "qword ptr [" in line:
+            line = line.replace("qword ptr [", "memory[")
+
+        if "byte ptr [" in line:
+            line = line.replace("byte ptr [", "memory[")
 
         translated_instructions.append(line)
     return translated_instructions
