@@ -32,6 +32,9 @@ def get_pseudocode(instructions):
                 next_instruction_addr = next_instruction.address
                 op_str = op_str.replace("rip", hex(next_instruction_addr))
 
+            if "qword ptr [" in op_str:
+                op_str = op_str.replace("qword ptr [","memory[")
+
             if mnemonic == 'mov':
                 line = f"{op_str.split(',')[0].strip()} = {op_str.split(',')[1].strip()}"
             elif mnemonic == 'add':
