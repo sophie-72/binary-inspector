@@ -1,4 +1,5 @@
 import sys
+import re
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
