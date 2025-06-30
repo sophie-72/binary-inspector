@@ -78,7 +78,20 @@ def translate_instructions(instructions):
             else:
                 line = f"if (condition) goto {op_str.strip()}"
         elif mnemonic == "jne":
-            line = f"if (!condition) goto {op_str.strip()}"
+            previous_instruction = instructions[instructions.index(i) - 1]
+
+            if previous_instruction.mnemonic in "cmp":
+                left = previous_instruction.op_str.split(",")[0]
+                right = previous_instruction.op_str.split(",")[1]
+
+                line = f"if ({left} != {right}) goto {op_str.strip()}"
+            elif previous_instruction.mnemonic in "test":
+                left = previous_instruction.op_str.split(",")[0]
+                right = previous_instruction.op_str.split(",")[1]
+
+                line = f"if (({left} & {right}) != 0) goto {op_str.strip()}"
+            else:
+                line = f"if (!condition) goto {op_str.strip()}"
         elif mnemonic == "jmp":
             line = f"goto {op_str.strip()}"
         elif mnemonic == "test":

@@ -41,7 +41,7 @@
 0x1119:	nop	dword ptr [rax]	; no operation
 0x1120:	endbr64		; end branch
 0x1124:	cmp	byte ptr [rip + 0x2f1d], 0	; compare byte ptr [0x4048], 0
-0x112b:	jne	0x1160	; if (!condition) goto 0x1160
+0x112b:	jne	0x1160	; if (byte ptr [rip + 0x2f1d] !=  0) goto 0x1160
 0x112d:	push	rbp	; stack.push(rbp)
 0x112e:	cmp	qword ptr [rip + 0x2eaa], 0	; compare memory[0x3fe0], 0
 0x1136:	mov	rbp, rsp	; rbp = rsp
@@ -109,7 +109,7 @@
 0x1238:	mov	rdi, rax	; rdi = rax
 0x123b:	call	0x1030	; call 0x1030
 0x1240:	test	eax, eax	; test eax, eax
-0x1242:	jne	0x1255	; if (!condition) goto 0x1255
+0x1242:	jne	0x1255	; if ((eax &  eax) != 0) goto 0x1255
 0x1244:	lea	rax, [rip + 0xdd7]	; rax = 0x2022
 0x124b:	mov	rdi, rax	; rdi = rax
 0x124e:	call	0x1040	; call 0x1040
