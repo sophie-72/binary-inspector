@@ -28,11 +28,13 @@ def translate_operation(instruction, instructions):
 
     two_value_operations = {
         "mov": lambda l, r: f"{l} = {r}",
-        "add": lambda l, r: f"{l} += {r}",
-        "sub": lambda l, r: f"{l} -= {r}",
-        "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} ^= {r}"),
-        "and": lambda l, r: f"{l} &= {r}",
-        "or": lambda l, r: f"{l} |= {r}",
+        "add": lambda l, r: f"{l} = {l} + {r}",
+        "sub": lambda l, r: f"{l} = {l} - {r}",
+        "or": lambda l, r: f"{l} = {l} | {r}",
+        "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} = {l} ^ {r}"),
+        "and": lambda l, r: f"{l} = {l} & {r}",
+        "shl": lambda l, r: f"{l} = {l} << {r}",
+        "shr": lambda l, r: f"{l} = {l} >> {r}",
     }
 
     if mnemonic in two_value_operations:
