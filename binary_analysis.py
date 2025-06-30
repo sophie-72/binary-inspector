@@ -125,22 +125,26 @@ def evaluate_addition(line):
     return line
 
 
+def translate_printable_character(line):
+    hex_character = re.search("0x[0-9a-f]{2}$", line)
+    if hex_character:
+        decimal_value = int(hex_character.group(), 16)
+
+        if 32 <= decimal_value <= 126:
+            character = chr(decimal_value)
+            line = line.replace(hex_character.group(), character)
+
+    return line
+
+
 def translate_instructions(instructions):
     translated_instructions = []
     for i in instructions:
         line = translate_operation(i, instructions)
         line = translate_pointer(line)
         line = translate_rip(line, instructions, i)
-
         line = evaluate_addition(line)
-
-        hex_character = re.search("0x[0-9a-f]{2}$", line)
-        if hex_character:
-            decimal_value = int(hex_character.group(), 16)
-
-            if 32 <= decimal_value <= 126:
-                character = chr(decimal_value)
-                line = line.replace(hex_character.group(), character)
+        line = translate_printable_character(line)
 
         translated_instructions.append(line)
     return translated_instructions
