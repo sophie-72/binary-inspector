@@ -41,59 +41,39 @@ def translate_instructions(instructions):
         if "qword ptr [" in op_str:
             op_str = op_str.replace("qword ptr [", "memory[")
 
-            if mnemonic == 'mov':
-                line = f"{op_str.split(',')[0].strip()} = {op_str.split(',')[1].strip()}"
-            elif mnemonic == 'add':
-                line = f"{op_str.split(',')[0].strip()} += {op_str.split(',')[1].strip()}"
-            elif mnemonic == 'sub':
-                line = f"{op_str.split(',')[0].strip()} -= {op_str.split(',')[1].strip()}"
+        two_value_operations = {
+            "mov": lambda l, r: f"{l} = {r}",
+            "add": lambda l, r: f"{l} += {r}",
+            "sub": lambda l, r: f"{l} -= {r}",
+            "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} ^= {r}"),
+            "and": lambda l, r: f"{l} &= {r}",
+            "or": lambda l, r: f"{l} |= {r}",
+        }
 
-        elif mnemonic == "xor":
-            left = op_str.split(",")[0].strip()
-            right = op_str.split(",")[1].strip()
-
-            if left == right:
-                line = f"{left} = 0"
-            else:
-                line = f"{left} ^= {right}"
-
-        elif mnemonic == "and":
-            line = f"{op_str.split(',')[0].strip()} &= {op_str.split(',')[1].strip()}"
-
-        elif mnemonic == "or":
-            line = f"{op_str.split(',')[0].strip()} |= {op_str.split(',')[1].strip()}"
-
+        if mnemonic in two_value_operations:
+            left, right = map(str.strip, op_str.split(","))
+            line = two_value_operations[mnemonic](left, right)
         elif mnemonic == "lea":
             dest, src = op_str.split(", ")
             line = f"{dest.strip()} = {src.strip()[1:-1]}"
-
         elif mnemonic == "call":
             line = f"call {op_str.strip()}"
-
         elif mnemonic == "ret":
             line = "return"
-
         elif mnemonic == "cmp":
             line = f"compare {op_str.strip()}"
-
         elif mnemonic == "je":
             line = f"if (condition) goto {op_str.strip()}"
-
         elif mnemonic == "jne":
             line = f"if (!condition) goto {op_str.strip()}"
-
         elif mnemonic == "jmp":
             line = f"goto {op_str.strip()}"
-
         elif mnemonic == "test":
             line = f"test {op_str.strip()}"
-
         elif mnemonic == "nop":
             line = "no operation"
-
         elif mnemonic == "hlt":
             line = "halt"
-
         elif mnemonic == "endbr64":
             line = "end branch"
         elif mnemonic == "push":
