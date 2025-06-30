@@ -65,7 +65,7 @@ def get_pseudocode(instructions):
 
             elif mnemonic == 'lea':
                 dest, src = op_str.split(', ')
-                line = f"{dest.strip()} = address_of({src.strip()})"
+                line = f"{dest.strip()} = {src.strip()[1:-1]}"
 
             elif mnemonic == 'call':
                 line = f"call {op_str.strip()}"
