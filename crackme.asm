@@ -15,10 +15,10 @@
 0x10b0:	lea	rdi, [rip + 0x2f81]	; rdi = 0x4038
 0x10b7:	lea	rax, [rip + 0x2f7a]	; rax = 0x4038
 0x10be:	cmp	rax, rdi	; compare rax, rdi
-0x10c1:	je	0x10d8	; if (condition) goto 0x10d8
+0x10c1:	je	0x10d8	; if (rax ==  rdi) goto 0x10d8
 0x10c3:	mov	rax, qword ptr [rip + 0x2efe]	; rax = memory[0x3fc8]
 0x10ca:	test	rax, rax	; test rax, rax
-0x10cd:	je	0x10d8	; if (condition) goto 0x10d8
+0x10cd:	je	0x10d8	; if ((rax &  rax) == 0) goto 0x10d8
 0x10cf:	jmp	rax	; goto rax
 0x10d1:	nop	dword ptr [rax]	; no operation
 0x10d8:	ret		; return
@@ -34,7 +34,7 @@
 0x1102:	je	0x1118	; if (condition) goto 0x1118
 0x1104:	mov	rax, qword ptr [rip + 0x2ecd]	; rax = memory[0x3fd8]
 0x110b:	test	rax, rax	; test rax, rax
-0x110e:	je	0x1118	; if (condition) goto 0x1118
+0x110e:	je	0x1118	; if ((rax &  rax) == 0) goto 0x1118
 0x1110:	jmp	rax	; goto rax
 0x1112:	nop	word ptr [rax + rax]	; no operation
 0x1118:	ret		; return
