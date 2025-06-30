@@ -97,10 +97,21 @@ def translate_operation(instruction, instructions):
     return line
 
 
+def translate_pointer(line):
+    if "qword ptr [" in line:
+        line = line.replace("qword ptr [", "memory[")
+
+    if "byte ptr [" in line:
+        line = line.replace("byte ptr [", "memory[")
+
+    return line
+
+
 def translate_instructions(instructions):
     translated_instructions = []
     for i in instructions:
         line = translate_operation(i, instructions)
+        line = translate_pointer(line)
 
         if "rip" in line:
             next_instruction = instructions[instructions.index(i) + 1]
@@ -111,12 +122,6 @@ def translate_instructions(instructions):
         if hex_addition:
             result = eval(hex_addition.group())
             line = line.replace(hex_addition.group(), hex(result))
-
-        if "qword ptr [" in line:
-            line = line.replace("qword ptr [", "memory[")
-
-        if "byte ptr [" in line:
-            line = line.replace("byte ptr [", "memory[")
 
         hex_character = re.search("0x[0-9a-f]{2}$", line)
         if hex_character:
