@@ -107,16 +107,21 @@ def translate_pointer(line):
     return line
 
 
+def translate_rip(line, instructions, i):
+    if "rip" in line:
+        next_instruction = instructions[instructions.index(i) + 1]
+        next_instruction_addr = next_instruction.address
+        line = line.replace("rip", hex(next_instruction_addr))
+
+    return line
+
+
 def translate_instructions(instructions):
     translated_instructions = []
     for i in instructions:
         line = translate_operation(i, instructions)
         line = translate_pointer(line)
-
-        if "rip" in line:
-            next_instruction = instructions[instructions.index(i) + 1]
-            next_instruction_addr = next_instruction.address
-            line = line.replace("rip", hex(next_instruction_addr))
+        line = translate_rip(line, instructions, i)
 
         hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
         if hex_addition:
