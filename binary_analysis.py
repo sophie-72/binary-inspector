@@ -116,6 +116,15 @@ def translate_rip(line, instructions, i):
     return line
 
 
+def evaluate_addition(line):
+    hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
+    if hex_addition:
+        result = eval(hex_addition.group())
+        line = line.replace(hex_addition.group(), hex(result))
+
+    return line
+
+
 def translate_instructions(instructions):
     translated_instructions = []
     for i in instructions:
@@ -123,10 +132,7 @@ def translate_instructions(instructions):
         line = translate_pointer(line)
         line = translate_rip(line, instructions, i)
 
-        hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
-        if hex_addition:
-            result = eval(hex_addition.group())
-            line = line.replace(hex_addition.group(), hex(result))
+        line = evaluate_addition(line)
 
         hex_character = re.search("0x[0-9a-f]{2}$", line)
         if hex_character:
