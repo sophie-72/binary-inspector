@@ -163,11 +163,12 @@ def write_to_file(executable_name, instructions, translated_instructions):
 
 
 def main():
-    instructions = get_file_instructions(sys.argv[1])
+    instructions = get_file_instructions(executable)
     translated_instructions = translate_instructions(instructions)
-    write_to_file(sys.argv[1], instructions, translated_instructions)
+    write_to_file(executable, instructions, translated_instructions)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
+        executable = sys.argv[1]
         main()
