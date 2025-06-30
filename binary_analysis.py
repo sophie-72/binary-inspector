@@ -21,8 +21,9 @@ def get_file_instructions(filename):
 
         return instructions
 
-def get_pseudocode(instructions):
-        pseudocode = []
+
+def translate_instructions(instructions):
+        translated_instructions = []
         for i in instructions:
             addr = i.address
             mnemonic = i.mnemonic
@@ -103,14 +104,20 @@ def get_pseudocode(instructions):
             else:
                 line = f"{mnemonic}"
 
-            print("0x%x:\t%s\t%s" % (i.address, i.mnemonic, i.op_str))
-            print(f"0x{addr:x}:\t{line}\n")
-            pseudocode.append(line)
-        return pseudocode
+            translated_instructions.append(line)
+        return translated_instructions
+
+def write_to_file(executable_name, instructions, translated_instructions):
+    filename = f"{executable_name}.asm"
+
+    with open(filename, 'w') as file:
+        for (instruction, translated_instruction) in zip(instructions, translated_instructions):
+            file.write(f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {translated_instruction}\n")
 
 def main():
     instructions = get_file_instructions(sys.argv[1])
-    get_pseudocode(instructions)
+    translated_instructions =  translate_instructions(instructions)
+    write_to_file(sys.argv[1], instructions, translated_instructions)
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
