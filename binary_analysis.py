@@ -32,6 +32,11 @@ def get_pseudocode(instructions):
                 next_instruction_addr = next_instruction.address
                 op_str = op_str.replace("rip", hex(next_instruction_addr))
 
+            hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", op_str)
+            if hex_addition:
+                result = eval(hex_addition.group())
+                op_str = op_str.replace(hex_addition.group(), hex(result))
+
             if "qword ptr [" in op_str:
                 op_str = op_str.replace("qword ptr [","memory[")
 
