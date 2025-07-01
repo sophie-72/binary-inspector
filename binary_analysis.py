@@ -1,5 +1,5 @@
-import sys
 import re
+import sys
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
@@ -127,6 +127,19 @@ def evaluate_addition(line):
     return line
 
 
+def translate_function_name(line, relocations):
+    hex_address_match_pattern = "0x[0-9a-f]+"
+    memory = re.search(f"memory\\[{hex_address_match_pattern}+]", line)
+    if memory:
+        hex_address = re.search(hex_address_match_pattern, memory.group())
+        function_name = relocations.get(hex_address.group())
+
+        if function_name:
+            line = line.replace(memory.group(), function_name)
+
+    return line
+
+
 def translate_printable_character(line):
     hex_character = re.search("0x[0-9a-f]{2}$", line)
     if hex_character:
@@ -139,13 +152,14 @@ def translate_printable_character(line):
     return line
 
 
-def translate_instructions(instructions):
+def translate_instructions(instructions, relocations):
     translated_instructions = []
     for i in instructions:
         line = translate_operation(i, instructions)
         line = translate_pointer(line)
         line = translate_rip(line, instructions, i)
         line = evaluate_addition(line)
+        line = translate_function_name(line, relocations)
         line = translate_printable_character(line)
 
         translated_instructions.append(line)
@@ -164,9 +178,28 @@ def write_to_file(executable_name, instructions, translated_instructions):
             )
 
 
+def get_file_relocations():
+    with open(executable, "rb") as f:
+        elffile = ELFFile(f)
+        reladyn = elffile.get_section_by_name(".rela.dyn")
+
+        symbol_table = elffile.get_section(reladyn["sh_link"])
+
+        relocations = {}
+        for relocation in reladyn.iter_relocations():
+            symbol = symbol_table.get_symbol(relocation["r_info_sym"])
+
+            if symbol:
+                addr = hex(relocation["r_offset"])
+                relocations[addr] = symbol.name
+
+        return relocations
+
+
 def main():
     instructions = get_file_instructions(executable)
-    translated_instructions = translate_instructions(instructions)
+    relocations = get_file_relocations()
+    translated_instructions = translate_instructions(instructions, relocations)
     write_to_file(executable, instructions, translated_instructions)
 
 

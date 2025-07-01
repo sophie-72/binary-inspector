@@ -9,14 +9,14 @@
 0x1093:	xor	r8d, r8d	; r8d = 0
 0x1096:	xor	ecx, ecx	; ecx = 0
 0x1098:	lea	rdi, [rip + 0xda]	; rdi = 0x1179
-0x109f:	call	qword ptr [rip + 0x2f1b]	; call memory[0x3fc0]
+0x109f:	call	qword ptr [rip + 0x2f1b]	; call __libc_start_main
 0x10a5:	hlt		; halt
 0x10a6:	nop	word ptr cs:[rax + rax]	; no operation
 0x10b0:	lea	rdi, [rip + 0x2f81]	; rdi = 0x4038
 0x10b7:	lea	rax, [rip + 0x2f7a]	; rax = 0x4038
 0x10be:	cmp	rax, rdi	; compare rax, rdi
 0x10c1:	je	0x10d8	; if (rax ==  rdi) goto 0x10d8
-0x10c3:	mov	rax, qword ptr [rip + 0x2efe]	; rax = memory[0x3fc8]
+0x10c3:	mov	rax, qword ptr [rip + 0x2efe]	; rax = _ITM_deregisterTMCloneTable
 0x10ca:	test	rax, rax	; test rax, rax
 0x10cd:	je	0x10d8	; if ((rax &  rax) == 0) goto 0x10d8
 0x10cf:	jmp	rax	; goto rax
@@ -32,7 +32,7 @@
 0x10fc:	add	rsi, rax	; rsi = rsi + rax
 0x10ff:	sar	rsi, 1	; sar
 0x1102:	je	0x1118	; if (condition) goto 0x1118
-0x1104:	mov	rax, qword ptr [rip + 0x2ecd]	; rax = memory[0x3fd8]
+0x1104:	mov	rax, qword ptr [rip + 0x2ecd]	; rax = _ITM_registerTMCloneTable
 0x110b:	test	rax, rax	; test rax, rax
 0x110e:	je	0x1118	; if ((rax &  rax) == 0) goto 0x1118
 0x1110:	jmp	rax	; goto rax
@@ -43,11 +43,11 @@
 0x1124:	cmp	byte ptr [rip + 0x2f1d], 0	; compare memory[0x4048], 0
 0x112b:	jne	0x1160	; if (memory[0x404a] !=  0) goto 0x1160
 0x112d:	push	rbp	; stack.push(rbp)
-0x112e:	cmp	qword ptr [rip + 0x2eaa], 0	; compare memory[0x3fe0], 0
+0x112e:	cmp	qword ptr [rip + 0x2eaa], 0	; compare __cxa_finalize, 0
 0x1136:	mov	rbp, rsp	; rbp = rsp
 0x1139:	je	0x1148	; if (condition) goto 0x1148
 0x113b:	mov	rdi, qword ptr [rip + 0x2eee]	; rdi = memory[0x4030]
-0x1142:	call	qword ptr [rip + 0x2e98]	; call memory[0x3fe0]
+0x1142:	call	qword ptr [rip + 0x2e98]	; call __cxa_finalize
 0x1148:	call	0x10b0	; call 0x10b0
 0x114d:	mov	byte ptr [rip + 0x2ef4], 1	; memory[0x4048] = 1
 0x1154:	pop	rbp	; rbp = stack.pop()
@@ -97,7 +97,7 @@
 0x1203:	mov	rdi, rax	; rdi = rax
 0x1206:	mov	eax, 0	; eax = 0
 0x120b:	call	0x1050	; call 0x1050
-0x1210:	mov	rdx, qword ptr [rip + 0x2e29]	; rdx = memory[0x4040]
+0x1210:	mov	rdx, qword ptr [rip + 0x2e29]	; rdx = stdin
 0x1217:	mov	rax, qword ptr [rbp - 8]	; rax = memory[rbp - 8]
 0x121b:	mov	esi, 9	; esi = 9
 0x1220:	mov	rdi, rax	; rdi = rax
