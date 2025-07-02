@@ -140,6 +140,18 @@ def translate_function_name(line, relocations):
     return line
 
 
+def translate_strings(line, strings):
+    hex_address_match_pattern = "0x[0-9a-f]+"
+    address = re.search(hex_address_match_pattern, line)
+    if address:
+        string = strings.get(address.group())
+
+        if string:
+            line = line.replace(address.group(), '"' + string + '"')
+
+    return line
+
+
 def translate_printable_character(line):
     hex_character = re.search("0x[0-9a-f]{2}$", line)
     if hex_character:
@@ -152,7 +164,7 @@ def translate_printable_character(line):
     return line
 
 
-def translate_instructions(instructions, relocations):
+def translate_instructions(instructions, relocations, strings):
     translated_instructions = []
     for i in instructions:
         line = translate_operation(i, instructions)
@@ -160,6 +172,7 @@ def translate_instructions(instructions, relocations):
         line = translate_rip(line, instructions, i)
         line = evaluate_addition(line)
         line = translate_function_name(line, relocations)
+        line = translate_strings(line, strings)
         line = translate_printable_character(line)
 
         translated_instructions.append(line)
@@ -196,10 +209,33 @@ def get_file_relocations():
         return relocations
 
 
+def get_file_strings():
+    rodata_strings = {}
+    with open(executable, "rb") as f:
+        elffile = ELFFile(f)
+
+        rodata_section = elffile.get_section_by_name(".rodata")
+        if rodata_section:
+            rodata_data = rodata_section.data()
+            rodata_address = rodata_section["sh_addr"]
+
+            # Extract strings from the .rodata section
+            strings = re.findall(
+                rb"[\x20-\x7E]+", rodata_data
+            )  # ASCII printable characters
+            for s in strings:
+                start_index = rodata_data.index(s)
+                string_address = rodata_address + start_index
+                rodata_strings[hex(string_address)] = s.decode("utf-8")
+
+        return rodata_strings
+
+
 def main():
     instructions = get_file_instructions(executable)
     relocations = get_file_relocations()
-    translated_instructions = translate_instructions(instructions, relocations)
+    strings = get_file_strings()
+    translated_instructions = translate_instructions(instructions, relocations, strings)
     write_to_file(executable, instructions, translated_instructions)
 
 

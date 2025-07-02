@@ -93,7 +93,7 @@
 0x11ee:	mov	edi, 9	; edi = 9
 0x11f3:	call	0x1070	; call 0x1070
 0x11f8:	mov	qword ptr [rbp - 8], rax	; memory[rbp - 8] = rax
-0x11fc:	lea	rax, [rip + 0xe01]	; rax = 0x2004
+0x11fc:	lea	rax, [rip + 0xe01]	; rax = "Enter the 8 letter password: "
 0x1203:	mov	rdi, rax	; rdi = rax
 0x1206:	mov	eax, 0	; eax = 0
 0x120b:	call	0x1050	; call 0x1050
@@ -110,11 +110,11 @@
 0x123b:	call	0x1030	; call 0x1030
 0x1240:	test	eax, eax	; test eax, eax
 0x1242:	jne	0x1255	; if ((eax &  eax) != 0) goto 0x1255
-0x1244:	lea	rax, [rip + 0xdd7]	; rax = 0x2022
+0x1244:	lea	rax, [rip + 0xdd7]	; rax = "You read my memory"
 0x124b:	mov	rdi, rax	; rdi = rax
 0x124e:	call	0x1040	; call 0x1040
 0x1253:	jmp	0x1264	; goto 0x1264
-0x1255:	lea	rax, [rip + 0xdd9]	; rax = 0x2035
+0x1255:	lea	rax, [rip + 0xdd9]	; rax = "You can't read my memory!"
 0x125c:	mov	rdi, rax	; rdi = rax
 0x125f:	call	0x1040	; call 0x1040
 0x1264:	mov	eax, 0	; eax = 0
