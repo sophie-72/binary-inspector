@@ -2,17 +2,22 @@ import re
 
 
 def translate_instructions(instructions, relocations, strings):
-    translated_instructions = []
-    for i in instructions:
-        line = translate_operation(i, instructions)
-        line = translate_pointer(line)
-        line = translate_rip(line, instructions, i)
-        line = evaluate_addition(line)
-        line = translate_function_name(line, relocations)
-        line = translate_strings(line, strings)
-        line = translate_printable_character(line)
+    translated_instructions = {}
+    for name, instructions in instructions.items():
+        section_translated_instructions = []
+        for i in instructions:
+            line = translate_operation(i, instructions)
+            line = translate_pointer(line)
+            line = translate_rip(line, instructions, i)
+            line = evaluate_addition(line)
+            line = translate_function_name(line, relocations)
+            line = translate_strings(line, strings)
+            line = translate_printable_character(line)
 
-        translated_instructions.append(line)
+            section_translated_instructions.append(line)
+
+        translated_instructions[name] = section_translated_instructions
+
     return translated_instructions
 
 

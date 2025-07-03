@@ -11,15 +11,22 @@ def get_file_instructions(filename):
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
 
-        code = elffile.get_section_by_name(".text")
-        opcodes = code.data()
-        addr = code["sh_addr"]
+        instructions = {}
+        for section in elffile.iter_sections():
+            if section["sh_type"] in (
+                "SHT_PROGBITS",
+                "SHT_NOBITS",
+            ):
+                opcodes = section.data()
+                addr = section["sh_addr"]
 
-        md = Cs(CS_ARCH_X86, CS_MODE_64)
+                md = Cs(CS_ARCH_X86, CS_MODE_64)
 
-        instructions = []
-        for i in md.disasm(opcodes, addr):
-            instructions.append(i)
+                section_instructions = []
+                for i in md.disasm(opcodes, addr):
+                    section_instructions.append(i)
+
+                instructions[section.name] = section_instructions
 
         return instructions
 
@@ -27,13 +34,26 @@ def get_file_instructions(filename):
 def write_to_file(executable_name, instructions, translated_instructions):
     filename = f"{executable_name}.asm"
 
+    instructions_and_translations = {
+        key: (instructions[key], translated_instructions[key])
+        for key in instructions.keys()
+    }
+
     with open(filename, "w") as file:
-        for instruction, translated_instruction in zip(
-            instructions, translated_instructions
-        ):
-            file.write(
-                f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {translated_instruction}\n"
-            )
+        for name, (
+            instructions,
+            translated_instructions,
+        ) in instructions_and_translations.items():
+            file.write(f"; {name}\n")
+
+            for instruction, translated_instruction in zip(
+                instructions, translated_instructions
+            ):
+                file.write(
+                    f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {translated_instruction}\n"
+                )
+
+            file.write(f"\n")
 
 
 def get_file_relocations():
