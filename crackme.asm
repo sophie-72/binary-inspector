@@ -60,10 +60,10 @@
 0x10e7:	lea	rsi, [rip + 0x2f4a]	; rsi = 0x4038
 0x10ee:	sub	rsi, rdi	; rsi = rsi - rdi
 0x10f1:	mov	rax, rsi	; rax = rsi
-0x10f4:	shr	rsi, 0x3f	; rsi = rsi >> ?
-0x10f8:	sar	rax, 3	; sar
+0x10f4:	shr	rsi, 0x3f	; rsi = (unsigned)rsi >> ?
+0x10f8:	sar	rax, 3	; rax = rax >> 3
 0x10fc:	add	rsi, rax	; rsi = rsi + rax
-0x10ff:	sar	rsi, 1	; sar
+0x10ff:	sar	rsi, 1	; rsi = rsi >> 1
 0x1102:	je	0x1118	; if (condition) goto 0x1118
 0x1104:	mov	rax, qword ptr [rip + 0x2ecd]	; rax = _ITM_registerTMCloneTable
 0x110b:	test	rax, rax	; test rax, rax
@@ -163,22 +163,22 @@
 ; .rodata
 0x2000:	add	dword ptr [rax], eax	; dword ptr [rax] = dword ptr [rax] + eax
 0x2002:	add	al, byte ptr [rax]	; al = al + memory[rax]
-0x2004:	outsb	dx, byte ptr [rsi]	; outsb
+0x2004:	outsb	dx, byte ptr [rsi]	; outport(dx, memory[rsi])
 0x2006:	je	0x206d	; if (condition) goto 0x206d
-0x2008:	jb	0x202a	; jb
+0x2008:	jb	0x202a	; if (left < right) goto 0x202a
 0x200a:	je	0x2074	; if (condition) goto 0x2074
 0x200c:	and	byte ptr gs:[rax], bh	; byte ptr gs:[rax] = byte ptr gs:[rax] & bh
 0x200f:	and	byte ptr [rbp + riz*2 + 0x74], ch	; memory[rbp + riz*2 + 0x74] = memory[rbp + riz*2 + 0x74] & ch
 0x2013:	je	0x207a	; if (condition) goto 0x207a
-0x2015:	jb	0x2037	; jb
-0x2017:	jo	0x207a	; jo
-0x2019:	jae	0x208e	; jae
-0x201b:	ja	0x208c	; ja
-0x201d:	jb	0x2083	; jb
+0x2015:	jb	0x2037	; if (left < right) goto 0x2037
+0x2017:	jo	0x207a	; if (overflow_occurred) goto 0x207a
+0x2019:	jae	0x208e	; if (condition) goto 0x208e
+0x201b:	ja	0x208c	; if (left > right) goto 0x208c
+0x201d:	jb	0x2083	; if (left < right) goto 0x2083
 0x201f:	cmp	ah, byte ptr [rax]	; compare ah, memory[rax]
 0x2021:	add	byte ptr [rcx + 0x6f], bl	; memory[rcx + 0x6f] = memory[rcx + 0x6f] + bl
 0x2024:	jne	0x2046	; if (!condition) goto 0x2046
-0x2026:	jb	0x208d	; jb
+0x2026:	jb	0x208d	; if (left < right) goto 0x208d
 
 ; .eh_frame_hdr
 0x2050:	add	dword ptr [rbx], ebx	; dword ptr [rbx] = dword ptr [rbx] + ebx
@@ -187,16 +187,16 @@
 0x2056:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x2058:	add	eax, dword ptr [rax]	; eax = eax + dword ptr [rax]
 0x205a:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
-0x205c:	shr	bh, 1	; bh = bh >> 1
+0x205c:	shr	bh, 1	; bh = (unsigned)bh >> 1
 
 ; .eh_frame
-0x2078:	adc	al, 0	; adc
+0x2078:	adc	al, 0	; al = al + 0 + carry_flag
 0x207a:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x207c:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x207e:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x2080:	add	dword ptr [rdx + 0x52], edi	; dword ptr [rdx + 0x52] = dword ptr [rdx + 0x52] + edi
 0x2083:	add	byte ptr [rcx], al	; memory[rcx] = memory[rcx] + al
-0x2085:	js	0x2097	; js
+0x2085:	js	0x2097	; if (result < 0) goto 0x2097
 0x2087:	add	dword ptr [rbx], ebx	; dword ptr [rbx] = dword ptr [rbx] + ebx
 0x2089:	or	al, 7	; al = al | 7
 0x208b:	or	byte ptr [rax + 0x14000001], dl	; memory[rax + 0x14000001] = memory[rax + 0x14000001] | dl
@@ -242,7 +242,7 @@
 0x3ffa:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x3ffc:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x3ffe:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
-0x4000:	adc	byte ptr ss:[rax], al	; adc
+0x4000:	adc	byte ptr ss:[rax], al	; byte ptr ss:[rax] = byte ptr ss:[rax] + al + carry_flag
 0x4003:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4005:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4007:	add	byte ptr [rsi + 0x10], al	; memory[rsi + 0x10] = memory[rsi + 0x10] + al
@@ -250,14 +250,14 @@
 0x400c:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x400e:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4010:	push	rsi	; stack.push(rsi)
-0x4011:	adc	byte ptr [rax], al	; adc
+0x4011:	adc	byte ptr [rax], al	; memory[rax] = memory[rax] + al + carry_flag
 0x4013:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4015:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4017:	add	byte ptr [rsi + 0x10], ah	; memory[rsi + 0x10] = memory[rsi + 0x10] + ah
 0x401a:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x401c:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x401e:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
-0x4020:	jbe	0x4032	; jbe
+0x4020:	jbe	0x4032	; if (condition) goto 0x4032
 0x4022:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4024:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
 0x4026:	add	byte ptr [rax], al	; memory[rax] = memory[rax] + al
