@@ -1,6 +1,6 @@
 import re
 import sys
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
@@ -210,6 +210,56 @@ def is_jump_target(instructions: List[Instruction], index: int):
     return False
 
 
+def extract_jump_target(instruction: Instruction) -> Optional[int]:
+    if not instruction.mnemonic.startswith("j"):
+        return None
+
+    op_str = instruction.op_str.strip()
+
+    if "0x" in op_str:
+        try:
+            target = int(op_str, 16)
+            return target
+        except ValueError:
+            pass
+
+    return None
+
+
+def find_block_by_address(
+    blocks: List[BasicBlock], target_address: int
+) -> Optional[BasicBlock]:
+    for block in blocks:
+        if block.start_address <= target_address <= block.end_address:
+            return block
+
+    return None
+
+
+def get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBlock]]:
+    graph = {}
+
+    for i, block in enumerate(function.basic_blocks):
+        graph[block] = []
+        last_instruction = block.instructions[-1]
+
+        if not is_block_terminator(last_instruction) and i + 1 < len(
+            function.basic_blocks
+        ):
+            graph[block].append(function.basic_blocks[i + 1])
+
+        if last_instruction.mnemonic.startswith("j"):
+            target_address = extract_jump_target(last_instruction)
+            if target_address:
+                target_block = find_block_by_address(
+                    function.basic_blocks, target_address
+                )
+                if target_block:
+                    graph[block].append(target_block)
+
+    return graph
+
+
 def main():
     instructions = get_file_instructions(executable)
     relocations = get_file_relocations()
@@ -218,6 +268,10 @@ def main():
     write_to_file(executable, instructions)
 
     functions = get_functions(instructions)
+    for function_name, function in functions.items():
+        print(function_name)
+        graph = get_control_flow_graph(function)
+        print(graph)
 
 
 if __name__ == "__main__":
