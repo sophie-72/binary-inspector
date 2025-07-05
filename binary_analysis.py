@@ -1,6 +1,6 @@
 import re
 import sys
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
