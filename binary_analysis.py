@@ -1,11 +1,11 @@
 import re
 import sys
-from typing import List
+from typing import List, Dict, Optional
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
 
-from models import Instruction
+from models import Instruction, Function
 from translation import translate_instructions
 
 
@@ -34,7 +34,9 @@ def get_file_instructions(filename):
         return instructions
 
 
-def write_to_file(executable_name, instructions):
+def write_to_file(
+    executable_name: str, instructions: Dict[str, List[Instruction]]
+) -> None:
     filename = f"{executable_name}.asm"
 
     with open(filename, "w") as file:
@@ -89,6 +91,74 @@ def get_file_strings():
         return rodata_strings
 
 
+def get_function_symbols() -> Dict[int, str]:
+    functions = {}
+
+    with open(executable, "rb") as f:
+        elffile = ELFFile(f)
+
+        symtab = elffile.get_section_by_name(".symtab")
+        if symtab:
+            for symbol in symtab.iter_symbols():
+                if symbol["st_info"]["type"] == "STT_FUNC":
+                    functions[symbol["st_value"]] = symbol.name
+
+        dynsym = elffile.get_section_by_name(".dynsym")
+        if dynsym:
+            for symbol in dynsym.iter_symbols():
+                if symbol["st_info"]["type"] == "STT_FUNC":
+                    functions[symbol["st_value"]] = symbol.name
+
+    return functions
+
+
+def get_functions(instructions: Dict[str, List[Instruction]]):
+    functions = {}
+
+    function_symbols = get_function_symbols()
+    sorted_addresses = sorted(function_symbols.keys())
+
+    for section_name, section_instructions in instructions.items():
+        if section_name == ".text":
+            for function_address in sorted_addresses:
+                function_name = function_symbols[function_address]
+
+                # Find the function start
+                function_start_index = None
+                for i, instruction in enumerate(section_instructions):
+                    if instruction.address == function_address:
+                        function_start_index = i
+                        break
+
+                if function_start_index is None:
+                    continue
+
+                # Find the function end
+                function_end_index = function_start_index
+                for j in range(function_start_index, len(section_instructions)):
+                    instruction = section_instructions[j]
+
+                    # Hit another function
+                    if instruction.address in function_symbols:
+                        break
+
+                    if instruction.mnemonic == "ret":
+                        function_end_index = j
+                        break
+
+                function_instructions = section_instructions[
+                    function_start_index : function_end_index + 1
+                ]
+                current_function = Function(
+                    function_name, function_address, function_instructions
+                )
+                current_function.end_address = function_instructions[-1].address
+
+                functions[function_name] = current_function
+
+    return functions
+
+
 def main():
     instructions = get_file_instructions(executable)
     relocations = get_file_relocations()
@@ -98,6 +168,8 @@ def main():
         executable,
         instructions,
     )
+    functions = get_functions(instructions)
+    print(functions)
 
 
 if __name__ == "__main__":

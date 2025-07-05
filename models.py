@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 
 class Instruction:
@@ -7,3 +7,10 @@ class Instruction:
         self.mnemonic: str = mnemonic
         self.op_str: str = op_str
         self.translation: Optional[str] = None
+
+
+class Function:
+    def __init__(self, name, start_address, instructions):
+        self.name: str = name
+        self.start_address: int = start_address
+        self.instructions: List[Instruction] = instructions
