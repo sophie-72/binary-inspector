@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 from capstone import *
 from elftools.elf.elffile import ELFFile
 
-from models import Instruction, Function
+from models import Instruction, Function, BasicBlock
 from translation import translate_instructions
 
 
@@ -119,44 +119,95 @@ def get_functions(instructions: Dict[str, List[Instruction]]):
     sorted_addresses = sorted(function_symbols.keys())
 
     for section_name, section_instructions in instructions.items():
-        if section_name == ".text":
-            for function_address in sorted_addresses:
-                function_name = function_symbols[function_address]
+        for function_address in sorted_addresses:
+            function_name = function_symbols[function_address]
 
-                # Find the function start
-                function_start_index = None
-                for i, instruction in enumerate(section_instructions):
-                    if instruction.address == function_address:
-                        function_start_index = i
-                        break
+            # Find the function start
+            function_start_index = None
+            for i, instruction in enumerate(section_instructions):
+                if instruction.address == function_address:
+                    function_start_index = i
+                    break
 
-                if function_start_index is None:
-                    continue
+            if function_start_index is None:
+                continue  # Function not in this section
 
-                # Find the function end
-                function_end_index = function_start_index
-                for j in range(function_start_index, len(section_instructions)):
-                    instruction = section_instructions[j]
+            # Find the function end
+            function_end_index = function_start_index
+            for j in range(function_start_index + 1, len(section_instructions)):
+                instruction = section_instructions[j]
 
-                    # Hit another function
-                    if instruction.address in function_symbols:
-                        break
+                # Stop if we hit another function or ret
+                if (
+                    instruction.address in function_symbols
+                    and instruction.address != function_address
+                ) or instruction.mnemonic == "ret":
+                    break
 
-                    if instruction.mnemonic == "ret":
-                        function_end_index = j
-                        break
+                function_end_index = j
 
-                function_instructions = section_instructions[
-                    function_start_index : function_end_index + 1
-                ]
-                current_function = Function(
-                    function_name, function_address, function_instructions
-                )
-                current_function.end_address = function_instructions[-1].address
+            function_instructions = section_instructions[
+                function_start_index : function_end_index + 1
+            ]
+            current_function = Function(
+                function_name, function_address, function_instructions
+            )
+            current_function.end_address = function_instructions[-1].address
+            identify_basic_blocks(current_function)
 
-                functions[function_name] = current_function
+            functions[function_name] = current_function
 
     return functions
+
+
+def identify_basic_blocks(function: Function) -> None:
+    blocks: List[BasicBlock] = []
+    current_block_instructions: List[Instruction] = []
+
+    for i, instruction in enumerate(function.instructions):
+        current_block_instructions.append(instruction)
+
+        if (
+            is_block_terminator(instruction) or is_jump_target(function.instructions, i)
+        ) and current_block_instructions:
+            block = BasicBlock(
+                current_block_instructions[0].address, current_block_instructions
+            )
+            blocks.append(block)
+            current_block_instructions = []
+
+    if current_block_instructions:
+        block = BasicBlock(
+            current_block_instructions[0].address, current_block_instructions
+        )
+        blocks.append(block)
+
+    function.basic_blocks = blocks
+
+
+def is_block_terminator(instruction: Instruction):
+    return instruction.mnemonic == "ret" or instruction.mnemonic.startswith("j")
+
+
+def is_jump_target(instructions: List[Instruction], index: int):
+    if index + 1 >= len(instructions):
+        return False
+
+    next_address = instructions[index + 1].address
+
+    for previous_instruction in instructions[: index + 1]:
+        if (
+            previous_instruction.mnemonic.startswith("j")
+            and "0x" in previous_instruction.op_str
+        ):
+            try:
+                target = int(previous_instruction.op_str.strip(), 16)
+                if target == next_address:
+                    return True
+            except ValueError:
+                pass
+
+    return False
 
 
 def main():
@@ -164,12 +215,9 @@ def main():
     relocations = get_file_relocations()
     strings = get_file_strings()
     translate_instructions(instructions, relocations, strings)
-    write_to_file(
-        executable,
-        instructions,
-    )
+    write_to_file(executable, instructions)
+
     functions = get_functions(instructions)
-    print(functions)
 
 
 if __name__ == "__main__":
