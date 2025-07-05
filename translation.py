@@ -1,24 +1,30 @@
 import re
+from typing import List
+
+from models import Instruction
 
 
-def translate_instructions(instructions, relocations, strings):
-    translated_instructions = {}
+def translate_instructions(instructions, relocations, strings) -> None:
     for name, instructions in instructions.items():
-        section_translated_instructions = []
         for i in instructions:
-            line = translate_operation(i, instructions)
-            line = translate_pointer(line)
-            line = translate_rip(line, instructions, i)
-            line = evaluate_addition(line)
-            line = translate_function_name(line, relocations)
-            line = translate_strings(line, strings)
-            line = translate_printable_character(line)
+            translate_instruction(i, instructions, relocations, strings)
 
-            section_translated_instructions.append(line)
 
-        translated_instructions[name] = section_translated_instructions
+def translate_instruction(
+    instruction: Instruction,
+    instructions: List[Instruction],
+    relocations: dict,
+    strings: dict,
+) -> None:
+    line = translate_operation(instruction, instructions)
+    line = translate_pointer(line)
+    line = translate_rip(line, instructions, instruction)
+    line = evaluate_addition(line)
+    line = translate_function_name(line, relocations)
+    line = translate_strings(line, strings)
+    line = translate_printable_character(line)
 
-    return translated_instructions
+    instruction.translation = line
 
 
 def translate_operation(instruction, instructions):

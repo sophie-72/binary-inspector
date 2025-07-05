@@ -1,9 +1,11 @@
 import re
 import sys
+from typing import List
 
 from capstone import *
 from elftools.elf.elffile import ELFFile
 
+from models import Instruction
 from translation import translate_instructions
 
 
@@ -22,35 +24,26 @@ def get_file_instructions(filename):
 
                 md = Cs(CS_ARCH_X86, CS_MODE_64)
 
-                section_instructions = []
+                section_instructions: List[Instruction] = []
                 for i in md.disasm(opcodes, addr):
-                    section_instructions.append(i)
+                    instruction = Instruction(i.address, i.mnemonic, i.op_str)
+                    section_instructions.append(instruction)
 
                 instructions[section.name] = section_instructions
 
         return instructions
 
 
-def write_to_file(executable_name, instructions, translated_instructions):
+def write_to_file(executable_name, instructions):
     filename = f"{executable_name}.asm"
 
-    instructions_and_translations = {
-        key: (instructions[key], translated_instructions[key])
-        for key in instructions.keys()
-    }
-
     with open(filename, "w") as file:
-        for name, (
-            instructions,
-            translated_instructions,
-        ) in instructions_and_translations.items():
+        for name, instructions in instructions.items():
             file.write(f"; {name}\n")
 
-            for instruction, translated_instruction in zip(
-                instructions, translated_instructions
-            ):
+            for instruction in instructions:
                 file.write(
-                    f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {translated_instruction}\n"
+                    f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {instruction.translation}\n"
                 )
 
             file.write(f"\n")
@@ -100,8 +93,11 @@ def main():
     instructions = get_file_instructions(executable)
     relocations = get_file_relocations()
     strings = get_file_strings()
-    translated_instructions = translate_instructions(instructions, relocations, strings)
-    write_to_file(executable, instructions, translated_instructions)
+    translate_instructions(instructions, relocations, strings)
+    write_to_file(
+        executable,
+        instructions,
+    )
 
 
 if __name__ == "__main__":
