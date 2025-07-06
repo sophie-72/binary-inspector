@@ -28,7 +28,7 @@ def _get_functions(instructions: Dict[str, List[Instruction]], executable):
     function_symbols = get_function_symbols(executable)
     sorted_addresses = sorted(function_symbols.keys())
 
-    for _, section_instructions in instructions.items():
+    for section_instructions in instructions.values():
         for function_address in sorted_addresses:
             function_name = function_symbols[function_address]
 
