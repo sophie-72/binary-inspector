@@ -1,9 +1,15 @@
+"""Identify basic blocks in a function."""
+
 from typing import List
 
 from models import Instruction, Function, BasicBlock
 
 
 def identify_basic_blocks(function: Function) -> None:
+    """
+    Identify basic blocks in a function.
+    :param function: the function
+    """
     blocks: List[BasicBlock] = []
     current_block_instructions: List[Instruction] = []
 
@@ -30,6 +36,11 @@ def identify_basic_blocks(function: Function) -> None:
 
 
 def is_block_terminator(instruction: Instruction):
+    """
+    Determine if the instruction is the last a block.
+    :param instruction: the instruction
+    :return: if the instruction represents a return or a jump
+    """
     return instruction.mnemonic == "ret" or instruction.mnemonic.startswith("j")
 
 
