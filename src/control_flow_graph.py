@@ -5,89 +5,17 @@ from elf_utils import get_function_symbols
 from models import Function, BasicBlock, Instruction
 
 
-def get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBlock]]:
-    graph = {}
-
-    for i, block in enumerate(function.basic_blocks):
-        graph[block] = []
-        last_instruction = block.instructions[-1]
-
-        if (
-            last_instruction.mnemonic.startswith("j")
-            and last_instruction.mnemonic != "jmp"
-        ) or not is_block_terminator(last_instruction):
-            if i + 1 < len(function.basic_blocks):
-                graph[block].append(function.basic_blocks[i + 1])
-
-        if last_instruction.mnemonic.startswith("j"):
-            target_address = extract_jump_target(last_instruction)
-            if target_address:
-                target_block = find_block_by_address(
-                    function.basic_blocks, target_address
-                )
-                if target_block and target_block not in graph[block]:
-                    graph[block].append(target_block)
-
-    return graph
-
-
-def print_control_flow_graph(
-    function: Function, graph: Dict[BasicBlock, List[BasicBlock]]
-) -> None:
-    print(f"\nControl Flow Graph for {function.name}:")
-    print("=" * 50)
-
-    for i, block in enumerate(function.basic_blocks):
-        successors = graph.get(block, [])
-
-        print(f"Block {i}: 0x{block.start_address:x} - 0x{block.end_address:x}")
-        print(f"  Instructions: {len(block.instructions)}")
-        print(f"  Successors: {len(successors)}")
-
-        for j, succ in enumerate(successors):
-            succ_index = function.basic_blocks.index(succ)
-            print(f"    -> Block {succ_index} (0x{succ.start_address:x})")
-
-        print()
-
-
-def extract_jump_target(instruction: Instruction) -> Optional[int]:
-    if not instruction.mnemonic.startswith("j"):
-        return None
-
-    op_str = instruction.op_str.strip()
-
-    if "0x" in op_str:
-        try:
-            target = int(op_str, 16)
-            return target
-        except ValueError:
-            pass
-
-    return None
-
-
-def find_block_by_address(
-    blocks: List[BasicBlock], target_address: int
-) -> Optional[BasicBlock]:
-    for block in blocks:
-        if block.start_address <= target_address <= block.end_address:
-            return block
-
-    return None
-
-
 def print_main_function_graph(
     instructions: Dict[str, List[Instruction]], executable
 ) -> None:
-    functions = get_functions(instructions, executable)
+    functions = _get_functions(instructions, executable)
     for function_name, function in functions.items():
         if function_name == "main":
-            graph = get_control_flow_graph(function)
-            print_control_flow_graph(function, graph)
+            graph = _get_control_flow_graph(function)
+            _print_control_flow_graph(function, graph)
 
 
-def get_functions(instructions: Dict[str, List[Instruction]], executable):
+def _get_functions(instructions: Dict[str, List[Instruction]], executable):
     functions = {}
 
     function_symbols = get_function_symbols(executable)
@@ -133,3 +61,75 @@ def get_functions(instructions: Dict[str, List[Instruction]], executable):
             functions[function_name] = current_function
 
     return functions
+
+
+def _print_control_flow_graph(
+    function: Function, graph: Dict[BasicBlock, List[BasicBlock]]
+) -> None:
+    print(f"\nControl Flow Graph for {function.name}:")
+    print("=" * 50)
+
+    for i, block in enumerate(function.basic_blocks):
+        successors = graph.get(block, [])
+
+        print(f"Block {i}: 0x{block.start_address:x} - 0x{block.end_address:x}")
+        print(f"  Instructions: {len(block.instructions)}")
+        print(f"  Successors: {len(successors)}")
+
+        for j, succ in enumerate(successors):
+            succ_index = function.basic_blocks.index(succ)
+            print(f"    -> Block {succ_index} (0x{succ.start_address:x})")
+
+        print()
+
+
+def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBlock]]:
+    graph = {}
+
+    for i, block in enumerate(function.basic_blocks):
+        graph[block] = []
+        last_instruction = block.instructions[-1]
+
+        if (
+            last_instruction.mnemonic.startswith("j")
+            and last_instruction.mnemonic != "jmp"
+        ) or not is_block_terminator(last_instruction):
+            if i + 1 < len(function.basic_blocks):
+                graph[block].append(function.basic_blocks[i + 1])
+
+        if last_instruction.mnemonic.startswith("j"):
+            target_address = _extract_jump_target(last_instruction)
+            if target_address:
+                target_block = _find_block_by_address(
+                    function.basic_blocks, target_address
+                )
+                if target_block and target_block not in graph[block]:
+                    graph[block].append(target_block)
+
+    return graph
+
+
+def _extract_jump_target(instruction: Instruction) -> Optional[int]:
+    if not instruction.mnemonic.startswith("j"):
+        return None
+
+    op_str = instruction.op_str.strip()
+
+    if "0x" in op_str:
+        try:
+            target = int(op_str, 16)
+            return target
+        except ValueError:
+            pass
+
+    return None
+
+
+def _find_block_by_address(
+    blocks: List[BasicBlock], target_address: int
+) -> Optional[BasicBlock]:
+    for block in blocks:
+        if block.start_address <= target_address <= block.end_address:
+            return block
+
+    return None
