@@ -20,10 +20,10 @@ jobs:
         pip install -r requirements.txt
 
     - name: Checking formatting with black
-      run: black --check $(git ls-files '*.py')
+      run: black --check src
 
     - name: Checking typing with mypy
-      run: mypy $(git ls-files '*.py')
+      run: mypy src
 
     - name: Analysing the code with pylint
-      run: pylint $(git ls-files '*.py')
+      run: pylint src
