@@ -1,13 +1,25 @@
+"""Translate assembly instructions to a more readable format."""
+
 import re
-from typing import List
+from typing import List, Dict
 
 from models import Instruction
 
 
-def translate_instructions(instructions, relocations, strings) -> None:
-    for name, instructions in instructions.items():
-        for i in instructions:
-            _translate_instruction(i, instructions, relocations, strings)
+def translate_instructions(
+    instructions: Dict[str, List[Instruction]],
+    relocations: Dict[str, str],
+    strings: Dict[str, str],
+) -> None:
+    """
+    Translate each instruction into a more readable format.
+    :param instructions: dictionary of instructions by section
+    :param relocations: dictionary of symbol for each relocation address
+    :param strings: dictionary of string for each string address
+    """
+    for _, section_instructions in instructions.items():
+        for i in section_instructions:
+            _translate_instruction(i, section_instructions, relocations, strings)
 
 
 def _translate_instruction(

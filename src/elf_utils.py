@@ -66,7 +66,7 @@ def get_file_strings(filename) -> Dict[str, str]:
     """
     Extract strings from an ELF file.
     :param filename: ELF file name
-    :return: dictionary of strings for each string address
+    :return: dictionary of string for each string address
     """
     rodata_strings = {}
     with open(filename, "rb") as f:
