@@ -20,14 +20,11 @@ def write_to_file(
 
     with open(filename, "w") as file:
         for name, instructions in instructions.items():
-            file.write(f"; {name}\n")
-
-            for instruction in instructions:
-                file.write(
-                    f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {instruction.translation}\n"
-                )
-
-            file.write(f"\n")
+            if name == ".text":
+                for instruction in instructions:
+                    file.write(
+                        f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {instruction.translation}\n"
+                    )
 
 
 def main():
