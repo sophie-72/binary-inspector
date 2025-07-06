@@ -28,7 +28,7 @@ def _get_functions(instructions: Dict[str, List[Instruction]], executable):
     function_symbols = get_function_symbols(executable)
     sorted_addresses = sorted(function_symbols.keys())
 
-    for section_name, section_instructions in instructions.items():
+    for _, section_instructions in instructions.items():
         for function_address in sorted_addresses:
             function_name = function_symbols[function_address]
 
@@ -82,7 +82,7 @@ def _print_control_flow_graph(
         print(f"  Instructions: {len(block.instructions)}")
         print(f"  Successors: {len(successors)}")
 
-        for j, succ in enumerate(successors):
+        for succ in successors:
             succ_index = function.basic_blocks.index(succ)
             print(f"    -> Block {succ_index} (0x{succ.start_address:x})")
 
