@@ -7,7 +7,7 @@ from elftools.elf.elffile import ELFFile
 from models import Instruction
 
 
-def get_file_instructions(filename):
+def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
 

@@ -9,9 +9,9 @@ def write_to_file(
     filename = f"{executable_name}.asm"
 
     with open(filename, "w") as file:
-        for name, instructions in instructions.items():
-            if name == ".text":
-                for instruction in instructions:
+        for section_name, section_instructions in instructions.items():
+            if section_name == ".text":
+                for instruction in section_instructions:
                     file.write(
                         f"0x{instruction.address:x}:\t{instruction.mnemonic}\t{instruction.op_str}\t; {instruction.translation}\n"
                     )
