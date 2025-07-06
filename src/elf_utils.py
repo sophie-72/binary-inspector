@@ -1,3 +1,5 @@
+"""Fetch data from the ELF file using the elftools library."""
+
 import re
 from typing import List, Dict
 
@@ -8,6 +10,11 @@ from models import Instruction
 
 
 def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
+    """
+    Extract assembly instructions from an ELF file.
+    :param filename: ELF file name
+    :return: dictionary of instructions for each section
+    """
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
 
@@ -32,7 +39,12 @@ def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
         return instructions
 
 
-def get_file_relocations(filename):
+def get_file_relocations(filename) -> Dict[str, str]:
+    """
+    Extract relocations from an ELF file.
+    :param filename: ELF file name
+    :return: dictionary of symbol for each relocation address
+    """
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
         reladyn = elffile.get_section_by_name(".rela.dyn")
@@ -50,7 +62,12 @@ def get_file_relocations(filename):
         return relocations
 
 
-def get_file_strings(filename):
+def get_file_strings(filename) -> Dict[str, str]:
+    """
+    Extract strings from an ELF file.
+    :param filename: ELF file name
+    :return: dictionary of strings for each string address
+    """
     rodata_strings = {}
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
@@ -73,21 +90,24 @@ def get_file_strings(filename):
 
 
 def get_function_symbols(filename) -> Dict[int, str]:
+    """
+    Extract symbols from an ELF file.
+    :param filename: ELF file name
+    :return: dictionary of symbols for each function address
+    """
     functions = {}
 
     with open(filename, "rb") as f:
         elffile = ELFFile(f)
 
         symtab = elffile.get_section_by_name(".symtab")
-        if symtab:
-            for symbol in symtab.iter_symbols():
-                if symbol["st_info"]["type"] == "STT_FUNC":
-                    functions[symbol["st_value"]] = symbol.name
-
         dynsym = elffile.get_section_by_name(".dynsym")
-        if dynsym:
-            for symbol in dynsym.iter_symbols():
-                if symbol["st_info"]["type"] == "STT_FUNC":
-                    functions[symbol["st_value"]] = symbol.name
+        tables = [symtab, dynsym]
+
+        for table in tables:
+            if table:
+                for symbol in table.iter_symbols():
+                    if symbol["st_info"]["type"] == "STT_FUNC":
+                        functions[symbol["st_value"]] = symbol.name
 
     return functions
