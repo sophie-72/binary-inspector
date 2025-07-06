@@ -188,10 +188,11 @@ def _translate_function_name(line, relocations):
     memory = re.search(f"memory\\[{hex_address_match_pattern}+]", line)
     if memory:
         hex_address = re.search(hex_address_match_pattern, memory.group())
-        function_name = relocations.get(hex_address.group())
+        if hex_address:
+            function_name = relocations.get(hex_address.group())
 
-        if function_name:
-            line = line.replace(memory.group(), function_name)
+            if function_name:
+                line = line.replace(memory.group(), function_name)
 
     return line
 
