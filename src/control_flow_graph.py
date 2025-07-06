@@ -1,3 +1,5 @@
+"""Generate the control flow graph of the main function."""
+
 from typing import List, Dict, Optional
 
 from blocks import identify_basic_blocks, is_block_terminator
@@ -8,6 +10,11 @@ from models import Function, BasicBlock, Instruction
 def print_main_function_graph(
     instructions: Dict[str, List[Instruction]], executable
 ) -> None:
+    """
+    Print the control flow graph elements of the main function.
+    :param instructions: dictionary of instructions by section name
+    :param executable: ELF file name
+    """
     functions = _get_functions(instructions, executable)
     for function_name, function in functions.items():
         if function_name == "main":
