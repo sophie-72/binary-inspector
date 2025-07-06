@@ -1,4 +1,4 @@
-"""Translate assembly instructions to a more readable format."""
+"""Translate assembly instructions into a more readable format."""
 
 import re
 from typing import List, Dict
@@ -12,14 +12,16 @@ def translate_instructions(
     strings: Dict[str, str],
 ) -> None:
     """
-    Translate each instruction into a more readable format.
+    Translate some instructions into a more readable format.
     :param instructions: dictionary of instructions by section
     :param relocations: dictionary of symbol for each relocation address
     :param strings: dictionary of string for each string address
     """
-    for _, section_instructions in instructions.items():
-        for i in section_instructions:
-            _translate_instruction(i, section_instructions, relocations, strings)
+    for section_instructions in instructions.values():
+        for instruction in section_instructions:
+            _translate_instruction(
+                instruction, section_instructions, relocations, strings
+            )
 
 
 def _translate_instruction(
@@ -28,7 +30,8 @@ def _translate_instruction(
     relocations: dict,
     strings: dict,
 ) -> None:
-    line = _translate_operation(instruction, instructions)
+    line_before_translation = instruction.mnemonic + " " + instruction.op_str
+    line = line_before_translation
     line = _translate_pointer(line)
     line = _translate_rip(line, instructions, instruction)
     line = _evaluate_addition(line)
@@ -36,135 +39,8 @@ def _translate_instruction(
     line = _translate_strings(line, strings)
     line = _translate_printable_character(line)
 
-    instruction.translation = line
-
-
-def _translate_operation(instruction, instructions):
-    mnemonic = instruction.mnemonic
-    op_str = instruction.op_str
-
-    two_value_operations = {
-        "mov": lambda l, r: f"{l} = {r}",
-        "add": lambda l, r: f"{l} = {l} + {r}",
-        "adc": lambda l, r: f"{l} = {l} + {r} + carry_flag",
-        "sub": lambda l, r: f"{l} = {l} - {r}",
-        "or": lambda l, r: f"{l} = {l} | {r}",
-        "xor": lambda l, r: (f"{l} = 0" if l == r else f"{l} = {l} ^ {r}"),
-        "and": lambda l, r: f"{l} = {l} & {r}",
-        "shl": lambda l, r: f"{l} = (unsigned){l} << {r}",
-        "shr": lambda l, r: f"{l} = (unsigned){l} >> {r}",
-        "sar": lambda l, r: f"{l} = {l} >> {r}",
-        "outsb": lambda l, r: f"outport({l}, {r})",
-    }
-
-    if mnemonic in two_value_operations:
-        left, right = map(str.strip, op_str.split(","))
-        line = two_value_operations[mnemonic](left, right)
-    elif mnemonic == "lea":
-        dest, src = op_str.split(", ")
-        line = f"{dest.strip()} = {src.strip()[1:-1]}"
-    elif mnemonic == "call":
-        line = f"call {op_str.strip()}"
-    elif mnemonic == "ret":
-        line = "return"
-    elif mnemonic == "cmp":
-        line = f"compare {op_str.strip()}"
-    elif mnemonic == "je":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} == {right}) goto {op_str.strip()}"
-        elif previous_instruction.mnemonic in "test":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if (({left} & {right}) == 0) goto {op_str.strip()}"
-        else:
-            line = f"if (condition) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jne":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} != {right}) goto {op_str.strip()}"
-        elif previous_instruction.mnemonic in "test":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if (({left} & {right}) != 0) goto {op_str.strip()}"
-        else:
-            line = f"if (!condition) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jb":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} < {right}) goto {op_str.strip()}"
-        else:
-            line = f"if (left < right) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "ja":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} > {right}) goto {op_str.strip()}"
-        else:
-            line = f"if (left > right) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jo":
-        line = f"if (overflow_occurred) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jae":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} >= {right}) goto {op_str.strip()}"
-        else:
-            line = f"if (condition) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jbe":
-        previous_instruction = instructions[instructions.index(instruction) - 1]
-
-        if previous_instruction.mnemonic in "cmp":
-            left = previous_instruction.op_str.split(",")[0]
-            right = previous_instruction.op_str.split(",")[1]
-
-            line = f"if ({left} <= {right}) goto {op_str.strip()}"
-        else:
-            line = f"if (condition) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "js":
-        line = f"if (result < 0) goto {op_str.strip()}"  # TODO
-    elif mnemonic == "jmp":
-        line = f"goto {op_str.strip()}"
-    elif mnemonic == "test":
-        line = f"test {op_str.strip()}"
-    elif mnemonic == "nop":
-        line = "no operation"
-    elif mnemonic == "hlt":
-        line = "halt"
-    elif mnemonic == "endbr64":
-        line = "end branch"
-    elif mnemonic == "push":
-        line = f"stack.push({op_str.strip()})"
-    elif mnemonic == "pop":
-        line = f"{op_str.strip()} = stack.pop()"
-    elif mnemonic == "leave":
-        line = "leave"
-    elif mnemonic == "loopne":
-        line = "loopne"  # TODO
-    else:
-        raise KeyError(f"Unknown mnemonic: {mnemonic}")
-
-    return line
+    if line != line_before_translation:
+        instruction.translation = line
 
 
 def _translate_pointer(line):

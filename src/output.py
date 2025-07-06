@@ -19,9 +19,14 @@ def write_to_file(
         for section_name, section_instructions in instructions.items():
             if section_name == ".text":
                 for instruction in section_instructions:
+                    translation = (
+                        f"; {instruction.translation}"
+                        if instruction.translation
+                        else ""
+                    )
                     file.write(
                         f"0x{instruction.address:x}:\t"
                         f"{instruction.mnemonic}\t"
                         f"{instruction.op_str}\t"
-                        f"; {instruction.translation}\n"
+                        f"{translation}\n"
                     )
