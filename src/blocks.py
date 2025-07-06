@@ -11,7 +11,8 @@ def identify_basic_blocks(function: Function) -> None:
         current_block_instructions.append(instruction)
 
         if (
-            is_block_terminator(instruction) or is_jump_target(function.instructions, i)
+            is_block_terminator(instruction)
+            or _is_jump_target(function.instructions, i)
         ) and current_block_instructions:
             block = BasicBlock(
                 current_block_instructions[0].address, current_block_instructions
@@ -32,7 +33,7 @@ def is_block_terminator(instruction: Instruction):
     return instruction.mnemonic == "ret" or instruction.mnemonic.startswith("j")
 
 
-def is_jump_target(instructions: List[Instruction], index: int):
+def _is_jump_target(instructions: List[Instruction], index: int):
     if index + 1 >= len(instructions):
         return False
 
