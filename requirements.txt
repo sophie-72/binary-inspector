@@ -1,2 +1,5 @@
+black
+mypy
+pylint
 pyelftools
 capstone
