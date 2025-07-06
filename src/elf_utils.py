@@ -1,7 +1,7 @@
 import re
 from typing import List, Dict
 
-import capstone
+import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
 from models import Instruction

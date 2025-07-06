@@ -83,7 +83,7 @@ def _print_control_flow_graph(
 
 
 def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBlock]]:
-    graph = {}
+    graph: Dict[BasicBlock, List[BasicBlock]] = {}
 
     for i, block in enumerate(function.basic_blocks):
         graph[block] = []
