@@ -7,27 +7,27 @@ from models import Instruction
 def translate_instructions(instructions, relocations, strings) -> None:
     for name, instructions in instructions.items():
         for i in instructions:
-            translate_instruction(i, instructions, relocations, strings)
+            _translate_instruction(i, instructions, relocations, strings)
 
 
-def translate_instruction(
+def _translate_instruction(
     instruction: Instruction,
     instructions: List[Instruction],
     relocations: dict,
     strings: dict,
 ) -> None:
-    line = translate_operation(instruction, instructions)
-    line = translate_pointer(line)
-    line = translate_rip(line, instructions, instruction)
-    line = evaluate_addition(line)
-    line = translate_function_name(line, relocations)
-    line = translate_strings(line, strings)
-    line = translate_printable_character(line)
+    line = _translate_operation(instruction, instructions)
+    line = _translate_pointer(line)
+    line = _translate_rip(line, instructions, instruction)
+    line = _evaluate_addition(line)
+    line = _translate_function_name(line, relocations)
+    line = _translate_strings(line, strings)
+    line = _translate_printable_character(line)
 
     instruction.translation = line
 
 
-def translate_operation(instruction, instructions):
+def _translate_operation(instruction, instructions):
     mnemonic = instruction.mnemonic
     op_str = instruction.op_str
 
@@ -155,7 +155,7 @@ def translate_operation(instruction, instructions):
     return line
 
 
-def translate_pointer(line):
+def _translate_pointer(line):
     if "qword ptr [" in line:
         line = line.replace("qword ptr [", "memory[")
 
@@ -165,7 +165,7 @@ def translate_pointer(line):
     return line
 
 
-def translate_rip(line, instructions, i):
+def _translate_rip(line, instructions, i):
     if "rip" in line:
         next_instruction = instructions[instructions.index(i) + 1]
         next_instruction_addr = next_instruction.address
@@ -174,7 +174,7 @@ def translate_rip(line, instructions, i):
     return line
 
 
-def evaluate_addition(line):
+def _evaluate_addition(line):
     hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
     if hex_addition:
         result = eval(hex_addition.group())
@@ -183,7 +183,7 @@ def evaluate_addition(line):
     return line
 
 
-def translate_function_name(line, relocations):
+def _translate_function_name(line, relocations):
     hex_address_match_pattern = "0x[0-9a-f]+"
     memory = re.search(f"memory\\[{hex_address_match_pattern}+]", line)
     if memory:
@@ -196,7 +196,7 @@ def translate_function_name(line, relocations):
     return line
 
 
-def translate_strings(line, strings):
+def _translate_strings(line, strings):
     hex_address_match_pattern = "0x[0-9a-f]+"
     address = re.search(hex_address_match_pattern, line)
     if address:
@@ -208,7 +208,7 @@ def translate_strings(line, strings):
     return line
 
 
-def translate_printable_character(line):
+def _translate_printable_character(line):
     hex_character = re.search("0x[0-9a-f]{2}$", line)
     if hex_character:
         decimal_value = int(hex_character.group(), 16)
