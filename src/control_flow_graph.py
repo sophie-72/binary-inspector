@@ -55,7 +55,6 @@ def _get_functions(instructions: Dict[str, List[Instruction]], executable):
             current_function = Function(
                 function_name, function_address, function_instructions
             )
-            current_function.end_address = function_instructions[-1].address
             identify_basic_blocks(current_function)
 
             functions[function_name] = current_function
