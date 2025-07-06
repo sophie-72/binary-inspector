@@ -1,7 +1,7 @@
 import re
 from typing import List, Dict
 
-from capstone import *
+import capstone
 from elftools.elf.elffile import ELFFile
 
 from models import Instruction
@@ -20,7 +20,7 @@ def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
                 opcodes = section.data()
                 addr = section["sh_addr"]
 
-                md = Cs(CS_ARCH_X86, CS_MODE_64)
+                md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
 
                 section_instructions: List[Instruction] = []
                 for i in md.disasm(opcodes, addr):
