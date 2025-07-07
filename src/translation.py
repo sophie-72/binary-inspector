@@ -5,6 +5,8 @@ from typing import List, Dict
 
 from models import Instruction
 
+HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
+
 
 def translate_instructions(
     instructions: Dict[str, List[Instruction]],
@@ -63,9 +65,11 @@ def _translate_rip(line, instructions, i):
 
 
 def _evaluate_addition(line):
-    hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
+    hex_addition = re.search(
+        f"{HEX_ADDRESS_MATCH_PATTERN}\\s\\+\\s{HEX_ADDRESS_MATCH_PATTERN}", line
+    )
     if hex_addition:
-        elements = re.findall("0x[0-9a-f]+", hex_addition.group())
+        elements = re.findall(HEX_ADDRESS_MATCH_PATTERN, hex_addition.group())
         left = int(elements[0], 16)
         right = int(elements[1], 16)
         result = left + right
@@ -75,10 +79,9 @@ def _evaluate_addition(line):
 
 
 def _translate_function_name(line, relocations):
-    hex_address_match_pattern = "0x[0-9a-f]+"
-    memory = re.search(f"memory\\[{hex_address_match_pattern}+]", line)
+    memory = re.search(f"memory\\[{HEX_ADDRESS_MATCH_PATTERN}+]", line)
     if memory:
-        hex_address = re.search(hex_address_match_pattern, memory.group())
+        hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, memory.group())
         if hex_address:
             function_name = relocations.get(hex_address.group())
 
@@ -89,8 +92,7 @@ def _translate_function_name(line, relocations):
 
 
 def _translate_strings(line, strings):
-    hex_address_match_pattern = "0x[0-9a-f]+"
-    address = re.search(hex_address_match_pattern, line)
+    address = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
     if address:
         string = strings.get(address.group())
 
