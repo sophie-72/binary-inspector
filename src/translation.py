@@ -65,7 +65,10 @@ def _translate_rip(line, instructions, i):
 def _evaluate_addition(line):
     hex_addition = re.search("0x[0-9a-f]+\\s\\+\\s0x[0-9a-f]+", line)
     if hex_addition:
-        result = eval(hex_addition.group())
+        elements = re.findall("0x[0-9a-f]+", hex_addition.group())
+        left = int(elements[0], 16)
+        right = int(elements[1], 16)
+        result = left + right
         line = line.replace(hex_addition.group(), hex(result))
 
     return line
