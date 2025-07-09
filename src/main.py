@@ -4,9 +4,9 @@ import sys
 
 from src.control_flow_graph import (
     print_main_function_graph,
-    _get_functions,
 )
 
+# from src.pattern_analysis import print_pattern_analysis
 from src.elf_utils import (
     get_file_instructions,
     get_file_relocations,
@@ -25,14 +25,6 @@ if __name__ == "__main__":
         translate_instructions(instructions, relocations, strings)
         write_to_file(executable, instructions)
         print_main_function_graph(instructions, executable)
-
-        """
-        functions = _get_functions(instructions, executable)
-        for function_name, function in functions.items():
-            if function.name == "main":
-                print_pattern_analysis(function)
-                break
-        """
     else:
         print("Usage: main.py <executable>")
         sys.exit(1)
