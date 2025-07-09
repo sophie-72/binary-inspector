@@ -1,0 +1,3 @@
+ANY_START_ADDRESS = 0x4
+ANY_MNEMONIC = "mov"
+ANY_OP_STR = ""
