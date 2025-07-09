@@ -1,3 +1,5 @@
+"""Various functions used by different modules"""
+
 from src.models import Instruction
 
 
