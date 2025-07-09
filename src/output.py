@@ -2,7 +2,7 @@
 
 from typing import List, Dict
 
-from models import Instruction
+from src.models import Instruction
 
 
 def write_to_file(

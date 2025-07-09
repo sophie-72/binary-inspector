@@ -3,7 +3,7 @@
 import re
 from typing import List, Dict
 
-from models import Instruction
+from src.models import Instruction
 
 HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 

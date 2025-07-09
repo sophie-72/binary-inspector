@@ -6,7 +6,7 @@ from typing import List, Dict
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from models import Instruction
+from src.models import Instruction
 
 
 def get_file_instructions(filename) -> Dict[str, List[Instruction]]:

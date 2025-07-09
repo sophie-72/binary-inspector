@@ -2,7 +2,7 @@
 
 from typing import List
 
-from models import Instruction, Function, BasicBlock
+from src.models import Instruction, Function, BasicBlock
 
 
 def identify_basic_blocks(function: Function) -> None:

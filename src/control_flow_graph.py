@@ -2,9 +2,9 @@
 
 from typing import List, Dict, Optional
 
-from blocks import identify_basic_blocks, is_block_terminator
-from elf_utils import get_function_symbols
-from models import Function, BasicBlock, Instruction
+from src.blocks import identify_basic_blocks, is_block_terminator
+from src.elf_utils import get_function_symbols
+from src.models import Function, BasicBlock, Instruction
 
 
 def print_main_function_graph(

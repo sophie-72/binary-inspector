@@ -19,7 +19,7 @@ A Python tool for analyzing ELF binaries.
 
 To analyze an ELF binary, run the following command:
 ```bash
-python src/main.py <executable>
+python -m src.main <executable>
 ```
 
 ### Example
@@ -34,7 +34,7 @@ gcc -o example/example example/example.c
 
 Then, analyze the binary with:
 ```bash
-python src/main.py example/example
+python -m src.main example/example
 ```
 
 

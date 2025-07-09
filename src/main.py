@@ -2,16 +2,17 @@
 
 import sys
 
-from control_flow_graph import (
+from src.control_flow_graph import (
     print_main_function_graph,
 )
 from elf_utils import (
+from src.elf_utils import (
     get_file_instructions,
     get_file_relocations,
     get_file_strings,
 )
-from output import write_to_file
-from translation import translate_instructions
+from src.output import write_to_file
+from src.translation import translate_instructions
 
 
 if __name__ == "__main__":
