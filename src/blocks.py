@@ -3,6 +3,7 @@
 from typing import List
 
 from src.models import Instruction, Function, BasicBlock
+from src.utils import is_block_terminator
 
 
 def identify_basic_blocks(function: Function) -> None:
@@ -33,15 +34,6 @@ def identify_basic_blocks(function: Function) -> None:
         blocks.append(block)
 
     function.basic_blocks = blocks
-
-
-def is_block_terminator(instruction: Instruction):
-    """
-    Determine if the instruction is the last a block.
-    :param instruction: the instruction
-    :return: if the instruction represents a return or a jump
-    """
-    return instruction.mnemonic == "ret" or instruction.mnemonic.startswith("j")
 
 
 def _is_jump_target(instructions: List[Instruction], index: int):
