@@ -15,28 +15,27 @@ def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
     :param filename: ELF file name
     :return: dictionary of instructions for each section
     """
-    with open(filename, "rb") as f:
-        elffile = ELFFile(f)
+    elffile = _open_elf_file(filename)
 
-        instructions = {}
-        for section in elffile.iter_sections():
-            if section["sh_type"] in (
-                "SHT_PROGBITS",
-                "SHT_NOBITS",
-            ):
-                opcodes = section.data()
-                addr = section["sh_addr"]
+    instructions = {}
+    for section in elffile.iter_sections():
+        if section["sh_type"] in (
+            "SHT_PROGBITS",
+            "SHT_NOBITS",
+        ):
+            opcodes = section.data()
+            addr = section["sh_addr"]
 
-                md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+            md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
 
-                section_instructions: List[Instruction] = []
-                for i in md.disasm(opcodes, addr):
-                    instruction = Instruction(i.address, i.mnemonic, i.op_str)
-                    section_instructions.append(instruction)
+            section_instructions: List[Instruction] = []
+            for i in md.disasm(opcodes, addr):
+                instruction = Instruction(i.address, i.mnemonic, i.op_str)
+                section_instructions.append(instruction)
 
-                instructions[section.name] = section_instructions
+            instructions[section.name] = section_instructions
 
-        return instructions
+    return instructions
 
 
 def get_file_relocations(filename) -> Dict[str, str]:
@@ -45,21 +44,20 @@ def get_file_relocations(filename) -> Dict[str, str]:
     :param filename: ELF file name
     :return: dictionary of symbol for each relocation address
     """
-    with open(filename, "rb") as f:
-        elffile = ELFFile(f)
-        reladyn = elffile.get_section_by_name(".rela.dyn")
+    elffile = _open_elf_file(filename)
+    reladyn = elffile.get_section_by_name(".rela.dyn")
 
-        symbol_table = elffile.get_section(reladyn["sh_link"])
+    symbol_table = elffile.get_section(reladyn["sh_link"])
 
-        relocations = {}
-        for relocation in reladyn.iter_relocations():
-            symbol = symbol_table.get_symbol(relocation["r_info_sym"])
+    relocations = {}
+    for relocation in reladyn.iter_relocations():
+        symbol = symbol_table.get_symbol(relocation["r_info_sym"])
 
-            if symbol:
-                addr = hex(relocation["r_offset"])
-                relocations[addr] = symbol.name
+        if symbol:
+            addr = hex(relocation["r_offset"])
+            relocations[addr] = symbol.name
 
-        return relocations
+    return relocations
 
 
 def get_file_strings(filename) -> Dict[str, str]:
@@ -69,24 +67,23 @@ def get_file_strings(filename) -> Dict[str, str]:
     :return: dictionary of string for each string address
     """
     rodata_strings = {}
-    with open(filename, "rb") as f:
-        elffile = ELFFile(f)
+    elffile = _open_elf_file(filename)
 
-        rodata_section = elffile.get_section_by_name(".rodata")
-        if rodata_section:
-            rodata_data = rodata_section.data()
-            rodata_address = rodata_section["sh_addr"]
+    rodata_section = elffile.get_section_by_name(".rodata")
+    if rodata_section:
+        rodata_data = rodata_section.data()
+        rodata_address = rodata_section["sh_addr"]
 
-            # Extract strings from the .rodata section
-            strings = re.findall(
-                rb"[\x20-\x7E]+", rodata_data
-            )  # ASCII printable characters
-            for s in strings:
-                start_index = rodata_data.index(s)
-                string_address = rodata_address + start_index
-                rodata_strings[hex(string_address)] = s.decode("utf-8")
+        # Extract strings from the .rodata section
+        strings = re.findall(
+            rb"[\x20-\x7E]+", rodata_data
+        )  # ASCII printable characters
+        for s in strings:
+            start_index = rodata_data.index(s)
+            string_address = rodata_address + start_index
+            rodata_strings[hex(string_address)] = s.decode("utf-8")
 
-        return rodata_strings
+    return rodata_strings
 
 
 def get_function_symbols(filename) -> Dict[int, str]:
@@ -97,17 +94,21 @@ def get_function_symbols(filename) -> Dict[int, str]:
     """
     functions = {}
 
-    with open(filename, "rb") as f:
-        elffile = ELFFile(f)
+    elffile = _open_elf_file(filename)
 
-        symtab = elffile.get_section_by_name(".symtab")
-        dynsym = elffile.get_section_by_name(".dynsym")
-        tables = [symtab, dynsym]
+    symtab = elffile.get_section_by_name(".symtab")
+    dynsym = elffile.get_section_by_name(".dynsym")
+    tables = [symtab, dynsym]
 
-        for table in tables:
-            if table:
-                for symbol in table.iter_symbols():
-                    if symbol["st_info"]["type"] == "STT_FUNC":
-                        functions[symbol["st_value"]] = symbol.name
+    for table in tables:
+        if table:
+            for symbol in table.iter_symbols():
+                if symbol["st_info"]["type"] == "STT_FUNC":
+                    functions[symbol["st_value"]] = symbol.name
 
     return functions
+
+
+def _open_elf_file(filename) -> ELFFile:
+    with open(filename, "rb") as f:
+        return ELFFile(f)
