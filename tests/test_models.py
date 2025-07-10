@@ -32,7 +32,6 @@ class TestBasicBlock(unittest.TestCase):
         block = BasicBlock(start_address=ANY_START_ADDRESS, instructions=[])
 
         end_address = block.end_address
-
         self.assertEqual(end_address, ANY_START_ADDRESS)
 
     def test_given_one_instruction_when_created_then_end_address_is_instruction_end_address(
@@ -48,5 +47,6 @@ class TestBasicBlock(unittest.TestCase):
         block = BasicBlock(
             start_address=ANY_START_ADDRESS, instructions=single_instruction
         )
+
         end_address = block.end_address
         self.assertEqual(end_address, ANY_START_ADDRESS)
