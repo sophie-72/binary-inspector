@@ -14,25 +14,21 @@ def identify_basic_blocks(function: Function) -> None:
     blocks: List[BasicBlock] = []
     current_block_instructions: List[Instruction] = []
 
+    def append_block(instructions: List[Instruction]) -> None:
+        if instructions:
+            block = BasicBlock(current_block_instructions[0].address, instructions)
+            blocks.append(block)
+
     for i, instruction in enumerate(function.instructions):
         current_block_instructions.append(instruction)
 
-        if (
-            is_block_terminator(instruction)
-            or _is_jump_target(function.instructions, i)
-        ) and current_block_instructions:
-            block = BasicBlock(
-                current_block_instructions[0].address, current_block_instructions
-            )
-            blocks.append(block)
+        if is_block_terminator(instruction) or _is_jump_target(
+            function.instructions, i
+        ):
+            append_block(current_block_instructions)
             current_block_instructions = []
 
-    if current_block_instructions:
-        block = BasicBlock(
-            current_block_instructions[0].address, current_block_instructions
-        )
-        blocks.append(block)
-
+    append_block(current_block_instructions)
     function.basic_blocks = blocks
 
 
