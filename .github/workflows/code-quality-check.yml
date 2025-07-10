@@ -18,13 +18,13 @@ jobs:
       run: pip install -r requirements-ci.txt
 
     - name: Check formatting with black
-      run: black --check src
+      run: black --check .
 
     - name: Check typing with mypy
-      run: mypy src
+      run: mypy src tests
 
     - name: Check code with pylint
-      run: pylint src
+      run: pylint src tests
 
     - name: Run tests with coverage
       run: |
