@@ -1,6 +1,2 @@
-black
-mypy
-pylint
-coverage
 pyelftools
 capstone
