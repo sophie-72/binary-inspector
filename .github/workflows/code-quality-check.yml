@@ -23,8 +23,11 @@ jobs:
     - name: Check typing with mypy
       run: mypy src tests
 
-    - name: Check code with pylint
-      run: pylint src tests
+    - name: Check code in src with pylint
+      run: pylint src
+
+    - name: Check code in tests with pylint
+      run: pylint --disable=C0114,C0115,C0116 tests
 
     - name: Run tests with coverage
       run: |
