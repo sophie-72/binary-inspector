@@ -6,7 +6,7 @@ from tests.fixtures import ANY_START_ADDRESS, ANY_MNEMONIC, ANY_OP_STR
 
 
 class TestIdentifyBasicBlocks(unittest.TestCase):
-    def test_given_a_function_with_multiple_instructions_when_identifying_basic_blocks_then_blocks_correctly_identified(
+    def test_given_function_with_multiple_instructions_when_identifying_basic_blocks_then_blocks_correctly_identified(  # pylint: disable=line-too-long
         self,
     ):
         any_function_name = "function name"
