@@ -2,9 +2,7 @@ import unittest
 
 from src.blocks import identify_basic_blocks
 from src.models import Function, Instruction
-from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR
-
-ANY_FUNCTION_NAME = "function name"
+from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR, A_FUNCTION_NAME
 
 
 class TestIdentifyBasicBlocks(unittest.TestCase):
@@ -18,7 +16,7 @@ class TestIdentifyBasicBlocks(unittest.TestCase):
             Instruction(address=0x1003, mnemonic=return_mnemonic, op_str=ANY_OP_STR),
         ]
         function = Function(
-            name=ANY_FUNCTION_NAME,
+            name=A_FUNCTION_NAME,
             start_address=ANY_ADDRESS,
             instructions=instructions,
         )

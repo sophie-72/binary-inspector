@@ -8,7 +8,7 @@ from src.elf_utils import (
     get_function_symbols,
 )
 from src.models import Instruction
-from tests.fixtures import ANY_ADDRESS, ANY_NUMBER
+from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
 
 ANY_FILENAME = "filename"
 
@@ -45,8 +45,6 @@ class TestElfUtils(unittest.TestCase):
         self.assertEqual(result, expected_instructions)
 
     def test_get_file_relocations(self):
-        a_function_name = "my_function"
-
         mock_relocation = MagicMock()
         mock_relocation.__getitem__.side_effect = lambda key: {
             "r_info_sym": ANY_NUMBER,
@@ -56,51 +54,47 @@ class TestElfUtils(unittest.TestCase):
         mock_rela_dyn.__getitem__.side_effect = lambda key: {"sh_link": ANY_NUMBER}[key]
         mock_rela_dyn.iter_relocations.return_value = [mock_relocation]
         mock_symbol = MagicMock()
-        mock_symbol.name = a_function_name
+        mock_symbol.name = A_FUNCTION_NAME
         mock_symbol_table = MagicMock()
         mock_symbol_table.get_symbol.return_value = mock_symbol
         self.mock_elf_file.get_section_by_name.return_value = mock_rela_dyn
         self.mock_elf_file.get_section.return_value = mock_symbol_table
 
         expected_relocations = {
-            f"{hex(ANY_ADDRESS)}": a_function_name,
+            f"{hex(ANY_ADDRESS)}": A_FUNCTION_NAME,
         }
 
         result = get_file_relocations(ANY_FILENAME)
         self.assertEqual(result, expected_relocations)
 
     def test_get_file_strings(self):
-        a_string = "Hello, World!"
-
         mock_rodata_section = MagicMock()
-        mock_rodata_section.data.return_value = a_string.encode("utf-8")
+        mock_rodata_section.data.return_value = A_STRING.encode("utf-8")
         mock_rodata_section.__getitem__.side_effect = lambda key: {
             "sh_addr": ANY_ADDRESS,
         }[key]
         self.mock_elf_file.get_section_by_name.return_value = mock_rodata_section
 
         expected_strings = {
-            f"{hex(ANY_ADDRESS)}": a_string,
+            f"{hex(ANY_ADDRESS)}": A_STRING,
         }
 
         result = get_file_strings(ANY_FILENAME)
         self.assertEqual(result, expected_strings)
 
     def test_get_function_symbols(self):
-        a_function_name = "my_function"
-
         mock_symbol = MagicMock()
         mock_symbol.__getitem__.side_effect = lambda key: {
             "st_info": {"type": "STT_FUNC"},
             "st_value": ANY_ADDRESS,
         }[key]
-        mock_symbol.name = a_function_name
+        mock_symbol.name = A_FUNCTION_NAME
         mock_symtab = MagicMock()
         mock_symtab.iter_symbols.return_value = [mock_symbol]
         self.mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
 
         expected_functions = {
-            ANY_ADDRESS: a_function_name,
+            ANY_ADDRESS: A_FUNCTION_NAME,
         }
 
         result = get_function_symbols(ANY_FILENAME)
