@@ -1,7 +1,12 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
-from src.elf_utils import get_file_instructions, get_file_relocations, get_file_strings
+from src.elf_utils import (
+    get_file_instructions,
+    get_file_relocations,
+    get_file_strings,
+    get_function_symbols,
+)
 from src.models import Instruction
 
 
@@ -72,3 +77,24 @@ class TestElfUtils(unittest.TestCase):
 
         result = get_file_strings("dummy.elf")
         self.assertEqual(result, expected_strings)
+
+    @patch("src.elf_utils._open_elf_file")
+    def test_get_function_symbols(self, mock_open_elf_file):
+        mock_elf_file = MagicMock()
+        mock_symtab = MagicMock()
+        mock_symbol = MagicMock()
+        mock_symbol.__getitem__.side_effect = lambda key: {
+            "st_info": {"type": "STT_FUNC"},
+            "st_value": 0x3000,
+        }[key]
+        mock_symbol.name = "my_function"
+        mock_symtab.iter_symbols.return_value = [mock_symbol]
+        mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
+        mock_open_elf_file.return_value = mock_elf_file
+
+        expected_functions = {
+            0x3000: "my_function",
+        }
+
+        result = get_function_symbols("dummy.elf")
+        self.assertEqual(result, expected_functions)
