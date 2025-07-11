@@ -34,8 +34,13 @@ class TestWriteToFile(unittest.TestCase):
 
         handle = mock_file()
         handle.write.assert_any_call(
-            f"{hex(ANY_ADDRESS)}:\t{an_instruction_without_a_translation.mnemonic}\t{an_instruction_without_a_translation.op_str}\t\n"
+            f"{hex(ANY_ADDRESS)}:\t"
+            f"{an_instruction_without_a_translation.mnemonic}\t"
+            f"{an_instruction_without_a_translation.op_str}\t\n"
         )
         handle.write.assert_any_call(
-            f"{hex(ANY_ADDRESS)}:\t{an_instruction_with_a_translation.mnemonic}\t{an_instruction_with_a_translation.op_str}\t; {an_instruction_with_a_translation.translation}\n"
+            f"{hex(ANY_ADDRESS)}:\t"
+            f"{an_instruction_with_a_translation.mnemonic}\t"
+            f"{an_instruction_with_a_translation.op_str}\t"
+            f"; {an_instruction_with_a_translation.translation}\n"
         )
