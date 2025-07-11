@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
-from src.elf_utils import get_file_instructions, get_file_relocations
+from src.elf_utils import get_file_instructions, get_file_relocations, get_file_strings
 from src.models import Instruction
 
 
@@ -54,3 +54,21 @@ class TestElfUtils(unittest.TestCase):
 
         result = get_file_relocations("dummy.elf")
         self.assertEqual(result, expected_relocations)
+
+    @patch("src.elf_utils._open_elf_file")
+    def test_get_file_strings(self, mock_open_elf_file):
+        mock_elf_file = MagicMock()
+        mock_rodata_section = MagicMock()
+        mock_rodata_section.data.return_value = b"Hello, World!"
+        mock_rodata_section.__getitem__.side_effect = lambda key: {
+            "sh_addr": 0x2000,
+        }[key]
+        mock_elf_file.get_section_by_name.return_value = mock_rodata_section
+        mock_open_elf_file.return_value = mock_elf_file
+
+        expected_strings = {
+            "0x2000": "Hello, World!",
+        }
+
+        result = get_file_strings("dummy.elf")
+        self.assertEqual(result, expected_strings)
