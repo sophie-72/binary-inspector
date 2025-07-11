@@ -55,10 +55,11 @@ def _translate_pointer(line):
 
 
 def _translate_rip(line, instructions, i):
-    if "rip" in line:
+    rip_keyword = "rip"
+    if rip_keyword in line:
         next_instruction = instructions[instructions.index(i) + 1]
         next_instruction_addr = next_instruction.address
-        line = line.replace("rip", hex(next_instruction_addr))
+        line = line.replace(rip_keyword, hex(next_instruction_addr))
 
     return line
 
