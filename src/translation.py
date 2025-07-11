@@ -46,11 +46,10 @@ def _translate_instruction(
 
 
 def _translate_pointer(line):
-    if "qword ptr [" in line:
-        line = line.replace("qword ptr [", "memory[")
+    pointer_types = ["qword", "byte"]
 
-    if "byte ptr [" in line:
-        line = line.replace("byte ptr [", "memory[")
+    for pointer_type in pointer_types:
+        line = line.replace(f"{pointer_type} ptr [", "memory[")
 
     return line
 
