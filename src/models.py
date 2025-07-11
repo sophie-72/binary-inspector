@@ -12,6 +12,16 @@ class Instruction:
         self.__op_str = op_str
         self.__translation: Optional[str] = None
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Instruction):
+            return False
+
+        return (
+            self.address == other.address
+            and self.mnemonic == other.mnemonic
+            and self.op_str == other.op_str
+        )
+
     @property
     def address(self) -> int:
         """Get the address of the instruction."""
