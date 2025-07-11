@@ -11,9 +11,15 @@ from src.models import Instruction
 
 
 class TestElfUtils(unittest.TestCase):
-    @patch("src.elf_utils._open_elf_file")
-    def test_get_file_instructions(self, mock_open_elf_file):
-        mock_elf_file = MagicMock()
+    def setUp(self):
+        patcher = patch("src.elf_utils._open_elf_file")
+        mock_open_elf_file = patcher.start()
+        self.addCleanup(patcher.stop)
+
+        self.mock_elf_file = MagicMock()
+        mock_open_elf_file.return_value = self.mock_elf_file
+
+    def test_get_file_instructions(self):
         mock_section = MagicMock()
         mock_section.name = ".text"
         mock_section.__getitem__.side_effect = lambda key: {
@@ -21,8 +27,7 @@ class TestElfUtils(unittest.TestCase):
             "sh_addr": 0x0,
         }[key]
         mock_section.data.return_value = b"\x55\x48\x89\xe5"
-        mock_elf_file.iter_sections.return_value = [mock_section]
-        mock_open_elf_file.return_value = mock_elf_file
+        self.mock_elf_file.iter_sections.return_value = [mock_section]
 
         expected_instructions = {
             ".text": [
@@ -34,9 +39,7 @@ class TestElfUtils(unittest.TestCase):
         result = get_file_instructions("dummy.elf")
         self.assertEqual(result, expected_instructions)
 
-    @patch("src.elf_utils._open_elf_file")
-    def test_get_file_relocations(self, mock_open_elf_file):
-        mock_elf_file = MagicMock()
+    def test_get_file_relocations(self):
         mock_rela_dyn = MagicMock()
         mock_rela_dyn.__getitem__.side_effect = lambda key: {"sh_link": 0}[key]
         mock_relocation = MagicMock()
@@ -49,9 +52,8 @@ class TestElfUtils(unittest.TestCase):
         mock_symbol.name = "my_function"
         mock_symbol_table = MagicMock()
         mock_symbol_table.get_symbol.return_value = mock_symbol
-        mock_elf_file.get_section_by_name.return_value = mock_rela_dyn
-        mock_elf_file.get_section.return_value = mock_symbol_table
-        mock_open_elf_file.return_value = mock_elf_file
+        self.mock_elf_file.get_section_by_name.return_value = mock_rela_dyn
+        self.mock_elf_file.get_section.return_value = mock_symbol_table
 
         expected_relocations = {
             "0x1000": "my_function",
@@ -60,16 +62,13 @@ class TestElfUtils(unittest.TestCase):
         result = get_file_relocations("dummy.elf")
         self.assertEqual(result, expected_relocations)
 
-    @patch("src.elf_utils._open_elf_file")
-    def test_get_file_strings(self, mock_open_elf_file):
-        mock_elf_file = MagicMock()
+    def test_get_file_strings(self):
         mock_rodata_section = MagicMock()
         mock_rodata_section.data.return_value = b"Hello, World!"
         mock_rodata_section.__getitem__.side_effect = lambda key: {
             "sh_addr": 0x2000,
         }[key]
-        mock_elf_file.get_section_by_name.return_value = mock_rodata_section
-        mock_open_elf_file.return_value = mock_elf_file
+        self.mock_elf_file.get_section_by_name.return_value = mock_rodata_section
 
         expected_strings = {
             "0x2000": "Hello, World!",
@@ -78,9 +77,7 @@ class TestElfUtils(unittest.TestCase):
         result = get_file_strings("dummy.elf")
         self.assertEqual(result, expected_strings)
 
-    @patch("src.elf_utils._open_elf_file")
-    def test_get_function_symbols(self, mock_open_elf_file):
-        mock_elf_file = MagicMock()
+    def test_get_function_symbols(self):
         mock_symtab = MagicMock()
         mock_symbol = MagicMock()
         mock_symbol.__getitem__.side_effect = lambda key: {
@@ -89,8 +86,7 @@ class TestElfUtils(unittest.TestCase):
         }[key]
         mock_symbol.name = "my_function"
         mock_symtab.iter_symbols.return_value = [mock_symbol]
-        mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
-        mock_open_elf_file.return_value = mock_elf_file
+        self.mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
 
         expected_functions = {
             0x3000: "my_function",
