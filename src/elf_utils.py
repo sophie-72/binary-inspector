@@ -101,8 +101,3 @@ class ELFProcessor:
                         functions[symbol["st_value"]] = symbol.name
 
         return functions
-
-
-def _open_elf_file(filename) -> ELFFile:
-    with open(filename, "rb") as f:
-        return ELFFile(f)
