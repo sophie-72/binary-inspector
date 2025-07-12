@@ -34,7 +34,7 @@ class Instruction:
 
     @property
     def op_str(self) -> str:
-        """Get the opcode of the instruction."""
+        """Get the operand string of the instruction."""
         return self.__op_str
 
     @property
