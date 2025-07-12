@@ -9,7 +9,7 @@ from src.utils import is_block_terminator
 def identify_basic_blocks(function: Function) -> None:
     """
     Identify basic blocks in a function.
-    :param function: the function
+    :param function: The function
     """
     blocks: List[BasicBlock] = []
     current_block_instructions: List[Instruction] = []
