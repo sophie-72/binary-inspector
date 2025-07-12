@@ -11,9 +11,9 @@ def identify_functions(
 ) -> Dict[str, Function]:
     """
     Identify functions from instructions and function symbols.
-    :param instructions: dictionary mapping section names and list of instructions
-    :param function_symbols: dictionary mapping function addresses to function names
-    :return: dictionary mapping function addresses to function objects
+    :param instructions: A dictionary mapping section names to lists of instructions.
+    :param function_symbols: A dictionary mapping function addresses to function names.
+    :return: A dictionary mapping function addresses to function objects.
     """
     functions = {}
 
