@@ -18,7 +18,7 @@ class ELFProcessor:
     def get_file_instructions(self) -> Dict[str, List[Instruction]]:
         """
         Extract assembly instructions from an ELF file.
-        :return: dictionary of instructions for each section
+        :return: A dictionary mapping section names to lists of instructions.
         """
 
         instructions = {}
