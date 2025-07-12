@@ -1,3 +1,5 @@
+"""Identify functions from instructions and function symbols."""
+
 from typing import Dict, List
 
 from src.blocks import identify_basic_blocks
@@ -7,6 +9,12 @@ from src.models import Instruction, Function
 def identify_functions(
     instructions: Dict[str, List[Instruction]], function_symbols: Dict[int, str]
 ) -> Dict[str, Function]:
+    """
+    Identify functions from instructions and function symbols.
+    :param instructions: dictionary mapping section names and list of instructions
+    :param function_symbols: dictionary mapping function addresses to function names
+    :return: dictionary mapping function addresses to function objects
+    """
     functions = {}
 
     sorted_addresses = sorted(function_symbols.keys())
