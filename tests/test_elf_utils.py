@@ -86,5 +86,5 @@ class TestElfUtils(unittest.TestCase):
             ANY_ADDRESS: A_FUNCTION_NAME,
         }
 
-        result = self.elf_processor.get_function_symbols()
+        result = self.elf_processor.get_function_names()
         self.assertEqual(result, expected_functions)

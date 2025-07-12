@@ -44,7 +44,7 @@ class ELFProcessor:
     def get_file_relocations(self) -> Dict[str, str]:
         """
         Extract relocations from an ELF file.
-        :return: dictionary of symbol for each relocation address
+        :return: A dictionary mapping relocations addresses to symbols.
         """
         reladyn = self.elffile.get_section_by_name(".rela.dyn")
 
@@ -63,7 +63,7 @@ class ELFProcessor:
     def get_file_strings(self) -> Dict[str, str]:
         """
         Extract strings from an ELF file.
-        :return: dictionary of string for each string address
+        :return: A dictionary mapping strings addresses to strings.
         """
         rodata_strings = {}
 
@@ -83,10 +83,10 @@ class ELFProcessor:
 
         return rodata_strings
 
-    def get_function_symbols(self) -> Dict[int, str]:
+    def get_function_names(self) -> Dict[int, str]:
         """
-        Extract symbols from an ELF file.
-        :return: dictionary of symbols for each function address
+        Extract function names from an ELF file.
+        :return: A dictionary mapping function addresses to function names.
         """
         functions = {}
 

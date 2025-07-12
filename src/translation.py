@@ -15,9 +15,9 @@ def translate_instructions(
 ) -> None:
     """
     Translate some instructions into a more readable format.
-    :param instructions: dictionary of instructions by section
-    :param relocations: dictionary of symbol for each relocation address
-    :param strings: dictionary of string for each string address
+    :param instructions: A dictionary mapping section names to lists of instructions.
+    :param relocations: A dictionary mapping relocation addresses to symbols.
+    :param strings: A dictionary mapping string addresses to strings.
     """
     for section_instructions in instructions.values():
         for instruction in section_instructions:

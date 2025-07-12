@@ -25,7 +25,7 @@ if __name__ == "__main__":
             instructions = elf_processor.get_file_instructions()
             relocations = elf_processor.get_file_relocations()
             strings = elf_processor.get_file_strings()
-            function_symbols = elf_processor.get_function_symbols()
+            function_symbols = elf_processor.get_function_names()
 
         translate_instructions(instructions, relocations, strings)
         write_to_file(executable, instructions)
