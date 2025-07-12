@@ -10,6 +10,8 @@ from src.models import Instruction
 
 
 class ELFProcessor:
+    """Extract information from an ELF file."""
+
     def __init__(self, elffile: ELFFile):
         self.elffile = elffile
 
