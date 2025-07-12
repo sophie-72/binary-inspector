@@ -9,104 +9,96 @@ from elftools.elf.elffile import ELFFile
 from src.models import Instruction
 
 
-def get_file_instructions(filename) -> Dict[str, List[Instruction]]:
-    """
-    Extract assembly instructions from an ELF file.
-    :param filename: ELF file name
-    :return: dictionary of instructions for each section
-    """
-    elffile = _open_elf_file(filename)
+class ELFProcessor:
+    def __init__(self, elffile: ELFFile):
+        self.elffile = elffile
 
-    instructions = {}
-    for section in elffile.iter_sections():
-        if section["sh_type"] in (
-            "SHT_PROGBITS",
-            "SHT_NOBITS",
-        ):
-            opcodes = section.data()
-            addr = section["sh_addr"]
+    def get_file_instructions(self) -> Dict[str, List[Instruction]]:
+        """
+        Extract assembly instructions from an ELF file.
+        :return: dictionary of instructions for each section
+        """
 
-            md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+        instructions = {}
+        for section in self.elffile.iter_sections():
+            if section["sh_type"] in (
+                "SHT_PROGBITS",
+                "SHT_NOBITS",
+            ):
+                opcodes = section.data()
+                addr = section["sh_addr"]
 
-            section_instructions: List[Instruction] = []
-            for i in md.disasm(opcodes, addr):
-                instruction = Instruction(i.address, i.mnemonic, i.op_str)
-                section_instructions.append(instruction)
+                md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
 
-            instructions[section.name] = section_instructions
+                section_instructions: List[Instruction] = []
+                for i in md.disasm(opcodes, addr):
+                    instruction = Instruction(i.address, i.mnemonic, i.op_str)
+                    section_instructions.append(instruction)
 
-    return instructions
+                instructions[section.name] = section_instructions
 
+        return instructions
 
-def get_file_relocations(filename) -> Dict[str, str]:
-    """
-    Extract relocations from an ELF file.
-    :param filename: ELF file name
-    :return: dictionary of symbol for each relocation address
-    """
-    elffile = _open_elf_file(filename)
-    reladyn = elffile.get_section_by_name(".rela.dyn")
+    def get_file_relocations(self) -> Dict[str, str]:
+        """
+        Extract relocations from an ELF file.
+        :return: dictionary of symbol for each relocation address
+        """
+        reladyn = self.elffile.get_section_by_name(".rela.dyn")
 
-    symbol_table = elffile.get_section(reladyn["sh_link"])
+        symbol_table = self.elffile.get_section(reladyn["sh_link"])
 
-    relocations = {}
-    for relocation in reladyn.iter_relocations():
-        symbol = symbol_table.get_symbol(relocation["r_info_sym"])
+        relocations = {}
+        for relocation in reladyn.iter_relocations():
+            symbol = symbol_table.get_symbol(relocation["r_info_sym"])
 
-        if symbol:
-            addr = hex(relocation["r_offset"])
-            relocations[addr] = symbol.name
+            if symbol:
+                addr = hex(relocation["r_offset"])
+                relocations[addr] = symbol.name
 
-    return relocations
+        return relocations
 
+    def get_file_strings(self) -> Dict[str, str]:
+        """
+        Extract strings from an ELF file.
+        :return: dictionary of string for each string address
+        """
+        rodata_strings = {}
 
-def get_file_strings(filename) -> Dict[str, str]:
-    """
-    Extract strings from an ELF file.
-    :param filename: ELF file name
-    :return: dictionary of string for each string address
-    """
-    rodata_strings = {}
-    elffile = _open_elf_file(filename)
+        rodata_section = self.elffile.get_section_by_name(".rodata")
+        if rodata_section:
+            rodata_data = rodata_section.data()
+            rodata_address = rodata_section["sh_addr"]
 
-    rodata_section = elffile.get_section_by_name(".rodata")
-    if rodata_section:
-        rodata_data = rodata_section.data()
-        rodata_address = rodata_section["sh_addr"]
+            # Extract strings from the .rodata section
+            strings = re.findall(
+                rb"[\x20-\x7E]+", rodata_data
+            )  # ASCII printable characters
+            for s in strings:
+                start_index = rodata_data.index(s)
+                string_address = rodata_address + start_index
+                rodata_strings[hex(string_address)] = s.decode("utf-8")
 
-        # Extract strings from the .rodata section
-        strings = re.findall(
-            rb"[\x20-\x7E]+", rodata_data
-        )  # ASCII printable characters
-        for s in strings:
-            start_index = rodata_data.index(s)
-            string_address = rodata_address + start_index
-            rodata_strings[hex(string_address)] = s.decode("utf-8")
+        return rodata_strings
 
-    return rodata_strings
+    def get_function_symbols(self) -> Dict[int, str]:
+        """
+        Extract symbols from an ELF file.
+        :return: dictionary of symbols for each function address
+        """
+        functions = {}
 
+        symtab = self.elffile.get_section_by_name(".symtab")
+        dynsym = self.elffile.get_section_by_name(".dynsym")
+        tables = [symtab, dynsym]
 
-def get_function_symbols(filename) -> Dict[int, str]:
-    """
-    Extract symbols from an ELF file.
-    :param filename: ELF file name
-    :return: dictionary of symbols for each function address
-    """
-    functions = {}
+        for table in tables:
+            if table:
+                for symbol in table.iter_symbols():
+                    if symbol["st_info"]["type"] == "STT_FUNC":
+                        functions[symbol["st_value"]] = symbol.name
 
-    elffile = _open_elf_file(filename)
-
-    symtab = elffile.get_section_by_name(".symtab")
-    dynsym = elffile.get_section_by_name(".dynsym")
-    tables = [symtab, dynsym]
-
-    for table in tables:
-        if table:
-            for symbol in table.iter_symbols():
-                if symbol["st_info"]["type"] == "STT_FUNC":
-                    functions[symbol["st_value"]] = symbol.name
-
-    return functions
+        return functions
 
 
 def _open_elf_file(filename) -> ELFFile:

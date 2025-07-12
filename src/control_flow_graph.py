@@ -3,29 +3,27 @@
 from typing import List, Dict, Optional
 
 from src.blocks import identify_basic_blocks, is_block_terminator
-from src.elf_utils import get_function_symbols
 from src.models import Function, BasicBlock, Instruction
 
 
 def print_main_function_graph(
-    instructions: Dict[str, List[Instruction]], executable
+    instructions: Dict[str, List[Instruction]], function_symbols
 ) -> None:
     """
     Print the control flow graph elements of the main function.
     :param instructions: dictionary of instructions by section name
     :param executable: ELF file name
     """
-    functions = _get_functions(instructions, executable)
+    functions = _get_functions(instructions, function_symbols)
     for function_name, function in functions.items():
         if function_name == "main":
             graph = _get_control_flow_graph(function)
             _print_control_flow_graph(function, graph)
 
 
-def _get_functions(instructions: Dict[str, List[Instruction]], executable):
+def _get_functions(instructions: Dict[str, List[Instruction]], function_symbols):
     functions = {}
 
-    function_symbols = get_function_symbols(executable)
     sorted_addresses = sorted(function_symbols.keys())
 
     for section_instructions in instructions.values():
