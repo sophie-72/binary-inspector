@@ -1,26 +1,15 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
-from src.elf_utils import (
-    get_file_instructions,
-    get_file_relocations,
-    get_file_strings,
-    get_function_symbols,
-)
+from src.elf_utils import ELFProcessor
 from src.models import Instruction
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
-
-ANY_FILENAME = "filename"
 
 
 class TestElfUtils(unittest.TestCase):
     def setUp(self):
-        patcher = patch("src.elf_utils._open_elf_file")
-        mock_open_elf_file = patcher.start()
-        self.addCleanup(patcher.stop)
-
         self.mock_elf_file = MagicMock()
-        mock_open_elf_file.return_value = self.mock_elf_file
+        self.elf_processor = ELFProcessor(self.mock_elf_file)
 
     def test_get_file_instructions(self):
         a_section_name = ".text"
@@ -41,7 +30,7 @@ class TestElfUtils(unittest.TestCase):
 
         expected_instructions = {a_section_name: instructions_matching_opcodes}
 
-        result = get_file_instructions(ANY_FILENAME)
+        result = self.elf_processor.get_file_instructions()
         self.assertEqual(result, expected_instructions)
 
     def test_get_file_relocations(self):
@@ -64,7 +53,7 @@ class TestElfUtils(unittest.TestCase):
             f"{hex(ANY_ADDRESS)}": A_FUNCTION_NAME,
         }
 
-        result = get_file_relocations(ANY_FILENAME)
+        result = self.elf_processor.get_file_relocations()
         self.assertEqual(result, expected_relocations)
 
     def test_get_file_strings(self):
@@ -79,7 +68,7 @@ class TestElfUtils(unittest.TestCase):
             f"{hex(ANY_ADDRESS)}": A_STRING,
         }
 
-        result = get_file_strings(ANY_FILENAME)
+        result = self.elf_processor.get_file_strings()
         self.assertEqual(result, expected_strings)
 
     def test_get_function_symbols(self):
@@ -97,5 +86,5 @@ class TestElfUtils(unittest.TestCase):
             ANY_ADDRESS: A_FUNCTION_NAME,
         }
 
-        result = get_function_symbols(ANY_FILENAME)
+        result = self.elf_processor.get_function_symbols()
         self.assertEqual(result, expected_functions)
