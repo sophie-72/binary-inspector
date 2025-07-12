@@ -103,11 +103,13 @@ def _translate_strings(line, strings):
 
 
 def _translate_printable_character(line):
+    range_min = 32
+    range_max = 126
     hex_character = re.search("0x[0-9a-f]{2}$", line)
     if hex_character:
         decimal_value = int(hex_character.group(), 16)
 
-        if 32 <= decimal_value <= 126:
+        if range_min <= decimal_value <= range_max:
             character = chr(decimal_value)
             line = line.replace(hex_character.group(), character)
 
