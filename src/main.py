@@ -30,6 +30,7 @@ if __name__ == "__main__":
         translate_instructions(instructions, relocations, strings)
         write_to_file(executable, instructions)
         print_main_function_graph(instructions, executable)
+        print_main_function_graph(instructions, function_symbols)
     else:
         print("Usage: main.py <executable>")
         sys.exit(1)
