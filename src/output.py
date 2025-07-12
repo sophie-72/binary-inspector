@@ -10,8 +10,8 @@ def write_to_file(
 ) -> None:
     """
     Write assembly instructions and translations to a file.
-    :param executable_name: ELF file name
-    :param instructions: dictionary of instructions by section name
+    :param executable_name: The ELF file name.
+    :param instructions: A dictionary mapping section names to lists of instructions.
     """
     filename = f"{executable_name}.asm"
 
