@@ -2,69 +2,24 @@
 
 from typing import List, Dict, Optional
 
-from src.blocks import identify_basic_blocks, is_block_terminator
+from src.blocks import is_block_terminator
+from src.functions import identify_functions
 from src.models import Function, BasicBlock, Instruction
 
 
 def print_main_function_graph(
-    instructions: Dict[str, List[Instruction]], function_symbols
+    instructions: Dict[str, List[Instruction]], function_symbols: Dict[int, str]
 ) -> None:
     """
     Print the control flow graph elements of the main function.
     :param instructions: dictionary of instructions by section name
-    :param executable: ELF file name
+    :param function_symbols: dictionary of function name by function address
     """
-    functions = _get_functions(instructions, function_symbols)
+    functions = identify_functions(instructions, function_symbols)
     for function_name, function in functions.items():
         if function_name == "main":
             graph = _get_control_flow_graph(function)
             _print_control_flow_graph(function, graph)
-
-
-def _get_functions(instructions: Dict[str, List[Instruction]], function_symbols):
-    functions = {}
-
-    sorted_addresses = sorted(function_symbols.keys())
-
-    for section_instructions in instructions.values():
-        for function_address in sorted_addresses:
-            function_name = function_symbols[function_address]
-
-            # Find the function start
-            function_start_index = None
-            for i, instruction in enumerate(section_instructions):
-                if instruction.address == function_address:
-                    function_start_index = i
-                    break
-
-            if function_start_index is None:
-                continue  # Function not in this section
-
-            # Find the function end
-            function_end_index = function_start_index
-            for j in range(function_start_index + 1, len(section_instructions)):
-                instruction = section_instructions[j]
-
-                # Stop if we hit another function or ret
-                if (
-                    instruction.address in function_symbols
-                    and instruction.address != function_address
-                ) or instruction.mnemonic == "ret":
-                    break
-
-                function_end_index = j
-
-            function_instructions = section_instructions[
-                function_start_index : function_end_index + 1
-            ]
-            current_function = Function(
-                function_name, function_address, function_instructions
-            )
-            identify_basic_blocks(current_function)
-
-            functions[function_name] = current_function
-
-    return functions
 
 
 def _print_control_flow_graph(
