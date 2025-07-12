@@ -12,8 +12,8 @@ def print_main_function_graph(
 ) -> None:
     """
     Print the control flow graph elements of the main function.
-    :param instructions: dictionary of instructions by section name
-    :param function_symbols: dictionary of function name by function address
+    :param instructions: A dictionary mapping section names to lists of instructions.
+    :param function_symbols: A dictionary mapping function addresses to function names.
     """
     functions = identify_functions(instructions, function_symbols)
     for function_name, function in functions.items():
