@@ -1,0 +1,2 @@
+JUMP_MNEMONIC = "jmp"
+RETURN_MNEMONIC = "ret"

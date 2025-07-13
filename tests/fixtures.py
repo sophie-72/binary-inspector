@@ -1,4 +1,5 @@
-from src.models import Address
+from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC
+from src.models import Address, Instruction
 
 ANY_ADDRESS = Address(0x4)
 ANY_MNEMONIC = "mov"
@@ -6,3 +7,9 @@ ANY_OP_STR = ""
 ANY_NUMBER = 1
 A_FUNCTION_NAME = "function"
 A_STRING = "Hello, World!"
+AN_INSTRUCTION_LIST = [
+    Instruction(address=Address(0x1000), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR),
+    Instruction(address=Address(0x1001), mnemonic=JUMP_MNEMONIC, op_str=ANY_OP_STR),
+    Instruction(address=Address(0x1002), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR),
+    Instruction(address=Address(0x1003), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR),
+]

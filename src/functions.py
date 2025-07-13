@@ -3,6 +3,7 @@
 from typing import Dict
 
 from src.blocks import identify_basic_blocks
+from src.constants import RETURN_MNEMONIC
 from src.models import Function
 from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
@@ -48,7 +49,7 @@ def identify_functions(
                     break
 
                 function_end_index = j
-                if instruction.mnemonic == "ret":
+                if instruction.mnemonic == RETURN_MNEMONIC:
                     break
 
             function_instructions = section_instructions[

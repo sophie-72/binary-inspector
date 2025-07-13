@@ -1,5 +1,6 @@
 import unittest
 
+from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC
 from src.utils import is_block_terminator
 from src.models import Instruction
 from tests.fixtures import ANY_ADDRESS, ANY_OP_STR, ANY_MNEMONIC
@@ -7,9 +8,8 @@ from tests.fixtures import ANY_ADDRESS, ANY_OP_STR, ANY_MNEMONIC
 
 class TestIsBlockTerminator(unittest.TestCase):
     def test_given_return_instruction_when_checking_if_block_terminator_then_true(self):
-        return_mnemonic = "ret"
         instruction = Instruction(
-            address=ANY_ADDRESS, mnemonic=return_mnemonic, op_str=ANY_OP_STR
+            address=ANY_ADDRESS, mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
         )
 
         result = is_block_terminator(instruction)
@@ -17,9 +17,8 @@ class TestIsBlockTerminator(unittest.TestCase):
         self.assertTrue(result)
 
     def test_given_jump_instruction_when_checking_if_block_terminator_then_true(self):
-        a_jump_mnemonic = "jmp"
         instruction = Instruction(
-            address=ANY_ADDRESS, mnemonic=a_jump_mnemonic, op_str=ANY_OP_STR
+            address=ANY_ADDRESS, mnemonic=JUMP_MNEMONIC, op_str=ANY_OP_STR
         )
 
         result = is_block_terminator(instruction)
