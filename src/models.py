@@ -86,9 +86,9 @@ class BasicBlock:
             return False
 
         return (
-            self.__start_address == other.__start_address
-            and self.__end_address == other.__end_address
-            and self.__instructions == other.__instructions
+            self.start_address == other.start_address
+            and self.end_address == other.end_address
+            and self.instructions == other.instructions
         )
 
     def __hash__(self) -> int:
