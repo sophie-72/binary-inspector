@@ -33,8 +33,8 @@ def translate_instructions(
 def _translate_instruction(
     instruction: Instruction,
     instructions: InstructionList,
-    relocations: dict,
-    strings: dict,
+    relocations: AddressToStringMapping,
+    strings: AddressToStringMapping,
 ) -> None:
     line_before_translation = instruction.mnemonic + " " + instruction.op_str
     line = line_before_translation
