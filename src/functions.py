@@ -4,8 +4,12 @@ from typing import Dict
 
 from src.blocks import identify_basic_blocks
 from src.constants import RETURN_MNEMONIC
-from src.models import Function
-from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
+from src.models import Function, Address
+from src.types import (
+    SectionNameToInstructionsMapping,
+    AddressToStringMapping,
+    InstructionList,
+)
 
 
 def identify_functions(
@@ -26,40 +30,62 @@ def identify_functions(
         for function_address in sorted_addresses:
             function_name = function_symbols[function_address]
 
-            # Find the function start
-            function_start_index = None
-            for i, instruction in enumerate(section_instructions):
-                if instruction.address == function_address:
-                    function_start_index = i
-                    break
-
-            if function_start_index is None:
-                continue  # Function not in this section
-
-            # Find the function end
-            function_end_index = function_start_index
-            for j in range(function_start_index + 1, len(section_instructions)):
-                instruction = section_instructions[j]
-
-                # Stop if we hit another function
-                if (
-                    instruction.address in function_symbols
-                    and instruction.address != function_address
-                ):
-                    break
-
-                function_end_index = j
-                if instruction.mnemonic == RETURN_MNEMONIC:
-                    break
-
-            function_instructions = section_instructions[
-                function_start_index : function_end_index + 1
-            ]
-            current_function = Function(
-                function_name, function_address, function_instructions
+            function_start_index = _get_function_start_index(
+                section_instructions, function_address
             )
-            identify_basic_blocks(current_function)
 
-            functions[function_name] = current_function
+            if function_start_index is not None:
+                function_end_index = _get_function_end_index(
+                    function_start_index,
+                    section_instructions,
+                    function_symbols,
+                    function_address,
+                )
+
+                function_instructions = section_instructions[
+                    function_start_index : function_end_index + 1
+                ]
+                current_function = Function(
+                    function_name, function_address, function_instructions
+                )
+                identify_basic_blocks(current_function)
+
+                functions[function_name] = current_function
 
     return functions
+
+
+def _get_function_start_index(
+    section_instructions: InstructionList, function_address: Address
+):
+    function_start_index = None
+    for i, instruction in enumerate(section_instructions):
+        if instruction.address == function_address:
+            function_start_index = i
+            break
+
+    return function_start_index
+
+
+def _get_function_end_index(
+    function_start_index: int,
+    section_instructions: InstructionList,
+    function_symbols: AddressToStringMapping,
+    function_address: Address,
+):
+    function_end_index = function_start_index
+    for j in range(function_start_index + 1, len(section_instructions)):
+        instruction = section_instructions[j]
+
+        # Stop if we hit another function
+        if (
+            instruction.address in function_symbols
+            and instruction.address != function_address
+        ):
+            break
+
+        function_end_index = j
+        if instruction.mnemonic == RETURN_MNEMONIC:
+            break
+
+    return function_end_index
