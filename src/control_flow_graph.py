@@ -1,11 +1,16 @@
 """Generate the control flow graph of the main function."""
 
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 
 from src.blocks import is_block_terminator
+from src.constants import JUMP_MNEMONIC
 from src.functions import identify_functions
 from src.models import Function, BasicBlock, Instruction
-from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
+from src.types import (
+    SectionNameToInstructionsMapping,
+    AddressToStringMapping,
+    BasicBlockList,
+)
 
 
 def print_main_function_graph(
@@ -25,7 +30,7 @@ def print_main_function_graph(
 
 
 def _print_control_flow_graph(
-    function: Function, graph: Dict[BasicBlock, List[BasicBlock]]
+    function: Function, graph: Dict[BasicBlock, BasicBlockList]
 ) -> None:
     print(f"\nControl Flow Graph for {function.name}:")
     print("=" * 50)
@@ -47,8 +52,8 @@ def _print_control_flow_graph(
         print()
 
 
-def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBlock]]:
-    graph: Dict[BasicBlock, List[BasicBlock]] = {}
+def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, BasicBlockList]:
+    graph: Dict[BasicBlock, BasicBlockList] = {}
 
     for i, block in enumerate(function.basic_blocks):
         graph[block] = []
@@ -56,7 +61,7 @@ def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, List[BasicBl
 
         if (
             last_instruction.mnemonic.startswith("j")
-            and last_instruction.mnemonic != "jmp"
+            and last_instruction.mnemonic != JUMP_MNEMONIC
         ) or not is_block_terminator(last_instruction):
             if i + 1 < len(function.basic_blocks):
                 graph[block].append(function.basic_blocks[i + 1])
@@ -90,7 +95,7 @@ def _extract_jump_target(instruction: Instruction) -> Optional[int]:
 
 
 def _find_block_by_address(
-    blocks: List[BasicBlock], target_address: int
+    blocks: BasicBlockList, target_address: int
 ) -> Optional[BasicBlock]:
     for block in blocks:
         if block.start_address.value <= target_address <= block.end_address.value:
