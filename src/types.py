@@ -1,3 +1,5 @@
+"""Types used by multiple modules"""
+
 from typing import Dict, List
 
 from src.models import Instruction
