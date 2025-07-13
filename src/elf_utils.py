@@ -84,7 +84,7 @@ class ELFProcessor:
 
         return rodata_strings
 
-    def get_function_names(self) -> Dict[int, str]:
+    def get_function_names(self) -> AddressToStringMapping:
         """
         Extract function names from an ELF file.
         :return: A dictionary mapping function addresses to function names.
@@ -99,6 +99,6 @@ class ELFProcessor:
             if table:
                 for symbol in table.iter_symbols():
                     if symbol["st_info"]["type"] == "STT_FUNC":
-                        functions[symbol["st_value"]] = symbol.name
+                        functions[hex(symbol["st_value"])] = symbol.name
 
         return functions

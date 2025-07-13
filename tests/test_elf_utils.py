@@ -83,7 +83,7 @@ class TestElfUtils(unittest.TestCase):
         self.mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
 
         expected_functions = {
-            ANY_ADDRESS: A_FUNCTION_NAME,
+            hex(ANY_ADDRESS): A_FUNCTION_NAME,
         }
 
         result = self.elf_processor.get_function_names()

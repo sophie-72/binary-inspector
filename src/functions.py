@@ -4,11 +4,12 @@ from typing import Dict
 
 from src.blocks import identify_basic_blocks
 from src.models import Function
-from src.types import SectionNameToInstructionsMapping
+from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
 def identify_functions(
-    instructions: SectionNameToInstructionsMapping, function_symbols: Dict[int, str]
+    instructions: SectionNameToInstructionsMapping,
+    function_symbols: AddressToStringMapping,
 ) -> Dict[str, Function]:
     """
     Identify functions from instructions and function symbols.
@@ -52,7 +53,7 @@ def identify_functions(
                 function_start_index : function_end_index + 1
             ]
             current_function = Function(
-                function_name, function_address, function_instructions
+                function_name, int(function_address, 16), function_instructions
             )
             identify_basic_blocks(current_function)
 

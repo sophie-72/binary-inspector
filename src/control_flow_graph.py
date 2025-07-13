@@ -5,11 +5,12 @@ from typing import List, Dict, Optional
 from src.blocks import is_block_terminator
 from src.functions import identify_functions
 from src.models import Function, BasicBlock, Instruction
-from src.types import SectionNameToInstructionsMapping
+from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
 def print_main_function_graph(
-    instructions: SectionNameToInstructionsMapping, function_symbols: Dict[int, str]
+    instructions: SectionNameToInstructionsMapping,
+    function_symbols: AddressToStringMapping,
 ) -> None:
     """
     Print the control flow graph elements of the main function.
