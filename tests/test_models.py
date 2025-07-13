@@ -1,12 +1,12 @@
 import unittest
 
-from src.models import Instruction, BasicBlock
+from src.models import Instruction, BasicBlock, Address
 from tests.fixtures import ANY_ADDRESS, ANY_OP_STR, ANY_MNEMONIC
 
 
 class TestBasicBlock(unittest.TestCase):
     def setUp(self):
-        self.any_end_address = 0x8
+        self.any_end_address = Address(0x8)
 
     def test_given_instructions_when_created_then_end_address_is_last_instruction_address(
         self,

@@ -5,7 +5,7 @@ import re
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from src.models import Instruction
+from src.models import Instruction, Address
 from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
@@ -34,7 +34,7 @@ class ELFProcessor:
 
                 section_instructions = []
                 for i in md.disasm(opcodes, addr):
-                    instruction = Instruction(i.address, i.mnemonic, i.op_str)
+                    instruction = Instruction(Address(i.address), i.mnemonic, i.op_str)
                     section_instructions.append(instruction)
 
                 instructions[section.name] = section_instructions
@@ -55,8 +55,8 @@ class ELFProcessor:
             symbol = symbol_table.get_symbol(relocation["r_info_sym"])
 
             if symbol:
-                addr = hex(relocation["r_offset"])
-                relocations[addr] = symbol.name
+                address = Address(relocation["r_offset"])
+                relocations[address] = symbol.name
 
         return relocations
 
@@ -78,8 +78,8 @@ class ELFProcessor:
             )  # ASCII printable characters
             for s in strings:
                 start_index = rodata_data.index(s)
-                string_address = rodata_address + start_index
-                rodata_strings[hex(string_address)] = s.decode("utf-8")
+                string_address = Address(rodata_address + start_index)
+                rodata_strings[string_address] = s.decode("utf-8")
 
         return rodata_strings
 
@@ -98,6 +98,7 @@ class ELFProcessor:
             if table:
                 for symbol in table.iter_symbols():
                     if symbol["st_info"]["type"] == "STT_FUNC":
-                        functions[hex(symbol["st_value"])] = symbol.name
+                        function_address = Address(symbol["st_value"])
+                        functions[function_address] = symbol.name
 
         return functions

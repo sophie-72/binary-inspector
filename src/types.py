@@ -2,8 +2,8 @@
 
 from typing import Dict, List
 
-from src.models import Instruction
+from src.models import Instruction, Address
 
 InstructionList = List[Instruction]
 SectionNameToInstructionsMapping = Dict[str, InstructionList]
-AddressToStringMapping = Dict[str, str]
+AddressToStringMapping = Dict[Address, str]

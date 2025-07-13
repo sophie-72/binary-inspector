@@ -1,6 +1,6 @@
 import unittest
 
-from src.models import Instruction
+from src.models import Instruction, Address
 from src.translation import translate_instructions
 from tests.fixtures import (
     ANY_ADDRESS,
@@ -11,14 +11,14 @@ from tests.fixtures import (
 )
 
 ANY_SECTION_NAME = ".section"
-A_FUNCTION_ADDRESS = 0x10
-A_STRING_ADDRESS = 0x20
+A_FUNCTION_ADDRESS = Address(0x10)
+A_STRING_ADDRESS = Address(0x20)
 
 
 class TestTranslateInstructions(unittest.TestCase):
     def setUp(self):
-        self.relocations = {f"{hex(A_FUNCTION_ADDRESS)}": A_FUNCTION_NAME}
-        self.strings = {f"{hex(A_STRING_ADDRESS)}": A_STRING}
+        self.relocations = {A_FUNCTION_ADDRESS: A_FUNCTION_NAME}
+        self.strings = {A_STRING_ADDRESS: A_STRING}
 
     def test_instruction_with_pointer(self):
         a_pointer_address = 0x1
@@ -49,7 +49,7 @@ class TestTranslateInstructions(unittest.TestCase):
         an_instruction_with_rip = Instruction(
             address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=op_str_with_rip
         )
-        another_instruction_address = ANY_ADDRESS + 1
+        another_instruction_address = Address(ANY_ADDRESS.value + 1)
         another_instruction = Instruction(
             address=another_instruction_address,
             mnemonic=ANY_MNEMONIC,
@@ -62,7 +62,7 @@ class TestTranslateInstructions(unittest.TestCase):
         translate_instructions(instructions, self.relocations, self.strings)
 
         expected_instruction_with_rip_translation = (
-            f"{ANY_MNEMONIC} {hex(another_instruction_address)}"
+            f"{ANY_MNEMONIC} {another_instruction_address.to_hex_string()}"
         )
         expected_other_instruction_translation = None
         self.assertEqual(
@@ -75,8 +75,10 @@ class TestTranslateInstructions(unittest.TestCase):
         )
 
     def test_instruction_with_addition(self):
-        any_other_address = ANY_ADDRESS + 1
-        op_str_with_addition = f"{hex(ANY_ADDRESS)} + {hex(any_other_address)}"
+        any_other_address = Address(ANY_ADDRESS.value + 1)
+        op_str_with_addition = (
+            f"{ANY_ADDRESS.to_hex_string()} + {any_other_address.to_hex_string()}"
+        )
         an_instruction_with_addition = Instruction(
             address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=op_str_with_addition
         )
@@ -84,16 +86,14 @@ class TestTranslateInstructions(unittest.TestCase):
 
         translate_instructions(instructions, self.relocations, self.strings)
 
-        expected_instruction_with_addition_translation = (
-            f"{ANY_MNEMONIC} {hex(ANY_ADDRESS + any_other_address)}"
-        )
+        expected_instruction_with_addition_translation = f"{ANY_MNEMONIC} {Address(ANY_ADDRESS.value + any_other_address.value).to_hex_string()}"
         self.assertEqual(
             instructions[ANY_SECTION_NAME][0].translation,
             expected_instruction_with_addition_translation,
         )
 
     def test_instruction_with_function_address(self):
-        op_str_with_function_address = f"memory[{hex(A_FUNCTION_ADDRESS)}]"
+        op_str_with_function_address = f"memory[{A_FUNCTION_ADDRESS.to_hex_string()}]"
         an_instruction_with_function_address = Instruction(
             address=ANY_ADDRESS,
             mnemonic=ANY_MNEMONIC,
@@ -112,7 +112,7 @@ class TestTranslateInstructions(unittest.TestCase):
         )
 
     def test_instruction_with_string_address(self):
-        op_str_with_string_address = f"{hex(A_STRING_ADDRESS)}"
+        op_str_with_string_address = A_STRING_ADDRESS.to_hex_string()
         an_instruction_with_string_address = Instruction(
             address=ANY_ADDRESS,
             mnemonic=ANY_MNEMONIC,

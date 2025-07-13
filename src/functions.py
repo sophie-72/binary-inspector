@@ -19,7 +19,7 @@ def identify_functions(
     """
     functions = {}
 
-    sorted_addresses = sorted(function_symbols.keys())
+    sorted_addresses = sorted(function_symbols.keys(), key=lambda x: x.value)
 
     for section_instructions in instructions.values():
         for function_address in sorted_addresses:
@@ -53,7 +53,7 @@ def identify_functions(
                 function_start_index : function_end_index + 1
             ]
             current_function = Function(
-                function_name, int(function_address, 16), function_instructions
+                function_name, function_address, function_instructions
             )
             identify_basic_blocks(current_function)
 

@@ -2,7 +2,7 @@
 
 import re
 
-from src.models import Instruction
+from src.models import Instruction, Address
 from src.types import (
     SectionNameToInstructionsMapping,
     InstructionList,
@@ -63,7 +63,7 @@ def _translate_rip(line, instructions, i):
     if rip_keyword in line:
         next_instruction = instructions[instructions.index(i) + 1]
         next_instruction_addr = next_instruction.address
-        line = line.replace(rip_keyword, hex(next_instruction_addr))
+        line = line.replace(rip_keyword, next_instruction_addr.to_hex_string())
 
     return line
 
@@ -87,7 +87,8 @@ def _translate_function_name(line, relocations):
     if memory:
         hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, memory.group())
         if hex_address:
-            function_name = relocations.get(hex_address.group())
+            address = Address(int(hex_address.group(), 16))
+            function_name = relocations.get(address)
 
             if function_name:
                 line = line.replace(memory.group(), function_name)
@@ -96,12 +97,13 @@ def _translate_function_name(line, relocations):
 
 
 def _translate_strings(line, strings):
-    address = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
-    if address:
-        string = strings.get(address.group())
+    address_string = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
+    if address_string:
+        address = Address(int(address_string.group(), 16))
+        string = strings.get(address)
 
         if string:
-            line = line.replace(address.group(), '"' + string + '"')
+            line = line.replace(address_string.group(), '"' + string + '"')
 
     return line
 

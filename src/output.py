@@ -23,7 +23,7 @@ def write_to_file(
                         else ""
                     )
                     file.write(
-                        f"0x{instruction.address:x}:\t"
+                        f"{instruction.address.to_hex_string()}:\t"
                         f"{instruction.mnemonic}\t"
                         f"{instruction.op_str}\t"
                         f"{translation}\n"

@@ -1,6 +1,6 @@
 """Identify basic blocks in a function."""
 
-from src.models import Function, BasicBlock
+from src.models import Function, BasicBlock, Address
 from src.types import InstructionList
 from src.utils import is_block_terminator
 
@@ -43,7 +43,7 @@ def _is_jump_target(instructions: InstructionList, index: int):
             and "0x" in previous_instruction.op_str
         ):
             try:
-                target = int(previous_instruction.op_str.strip(), 16)
+                target = Address(int(previous_instruction.op_str.strip(), 16))
                 if target == next_address:
                     return True
             except ValueError:

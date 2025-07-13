@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from src.elf_utils import ELFProcessor
-from src.models import Instruction
+from src.models import Instruction, Address
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
 
 
@@ -16,14 +16,18 @@ class TestElfUtils(unittest.TestCase):
         some_opcodes = b"\x55\x48\x89\xe5"
         instructions_matching_opcodes = [
             Instruction(address=ANY_ADDRESS, mnemonic="push", op_str="rbp"),
-            Instruction(address=ANY_ADDRESS + 1, mnemonic="mov", op_str="rbp, rsp"),
+            Instruction(
+                address=Address(ANY_ADDRESS.value + 1),
+                mnemonic="mov",
+                op_str="rbp, rsp",
+            ),
         ]
 
         mock_section = MagicMock()
         mock_section.name = a_section_name
         mock_section.__getitem__.side_effect = lambda key: {
             "sh_type": "SHT_PROGBITS",
-            "sh_addr": ANY_ADDRESS,
+            "sh_addr": ANY_ADDRESS.value,
         }[key]
         mock_section.data.return_value = some_opcodes
         self.mock_elf_file.iter_sections.return_value = [mock_section]
@@ -37,7 +41,7 @@ class TestElfUtils(unittest.TestCase):
         mock_relocation = MagicMock()
         mock_relocation.__getitem__.side_effect = lambda key: {
             "r_info_sym": ANY_NUMBER,
-            "r_offset": ANY_ADDRESS,
+            "r_offset": ANY_ADDRESS.value,
         }[key]
         mock_rela_dyn = MagicMock()
         mock_rela_dyn.__getitem__.side_effect = lambda key: {"sh_link": ANY_NUMBER}[key]
@@ -50,7 +54,7 @@ class TestElfUtils(unittest.TestCase):
         self.mock_elf_file.get_section.return_value = mock_symbol_table
 
         expected_relocations = {
-            f"{hex(ANY_ADDRESS)}": A_FUNCTION_NAME,
+            ANY_ADDRESS: A_FUNCTION_NAME,
         }
 
         result = self.elf_processor.get_file_relocations()
@@ -60,12 +64,12 @@ class TestElfUtils(unittest.TestCase):
         mock_rodata_section = MagicMock()
         mock_rodata_section.data.return_value = A_STRING.encode("utf-8")
         mock_rodata_section.__getitem__.side_effect = lambda key: {
-            "sh_addr": ANY_ADDRESS,
+            "sh_addr": ANY_ADDRESS.value,
         }[key]
         self.mock_elf_file.get_section_by_name.return_value = mock_rodata_section
 
         expected_strings = {
-            f"{hex(ANY_ADDRESS)}": A_STRING,
+            ANY_ADDRESS: A_STRING,
         }
 
         result = self.elf_processor.get_file_strings()
@@ -75,7 +79,7 @@ class TestElfUtils(unittest.TestCase):
         mock_symbol = MagicMock()
         mock_symbol.__getitem__.side_effect = lambda key: {
             "st_info": {"type": "STT_FUNC"},
-            "st_value": ANY_ADDRESS,
+            "st_value": ANY_ADDRESS.value,
         }[key]
         mock_symbol.name = A_FUNCTION_NAME
         mock_symtab = MagicMock()
@@ -83,7 +87,7 @@ class TestElfUtils(unittest.TestCase):
         self.mock_elf_file.get_section_by_name.side_effect = [mock_symtab, None]
 
         expected_functions = {
-            hex(ANY_ADDRESS): A_FUNCTION_NAME,
+            ANY_ADDRESS: A_FUNCTION_NAME,
         }
 
         result = self.elf_processor.get_function_names()

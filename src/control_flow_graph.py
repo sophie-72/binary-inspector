@@ -33,13 +33,15 @@ def _print_control_flow_graph(
     for i, block in enumerate(function.basic_blocks):
         successors = graph.get(block, [])
 
-        print(f"Block {i}: 0x{block.start_address:x} - 0x{block.end_address:x}")
+        print(
+            f"Block {i}: {block.start_address.to_hex_string()} - {block.end_address.to_hex_string()}"
+        )
         print(f"  Instructions: {len(block.instructions)}")
         print(f"  Successors: {len(successors)}")
 
         for succ in successors:
             succ_index = function.basic_blocks.index(succ)
-            print(f"    -> Block {succ_index} (0x{succ.start_address:x})")
+            print(f"    -> Block {succ_index} ({succ.start_address.to_hex_string()})")
 
         print()
 
@@ -90,7 +92,7 @@ def _find_block_by_address(
     blocks: List[BasicBlock], target_address: int
 ) -> Optional[BasicBlock]:
     for block in blocks:
-        if block.start_address <= target_address <= block.end_address:
+        if block.start_address.value <= target_address <= block.end_address.value:
             return block
 
     return None

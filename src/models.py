@@ -3,10 +3,33 @@
 from typing import Optional, List
 
 
+class Address:
+    """Represents an address."""
+
+    def __init__(self, value: int) -> None:
+        self.__value = value
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Address):
+            return False
+
+        return self.__value == other.value
+
+    def __hash__(self) -> int:
+        return hash(self.__value)
+
+    @property
+    def value(self) -> int:
+        return self.__value
+
+    def to_hex_string(self) -> str:
+        return hex(self.__value)
+
+
 class Instruction:
     """Represent an assembly instruction."""
 
-    def __init__(self, address: int, mnemonic: str, op_str: str) -> None:
+    def __init__(self, address: Address, mnemonic: str, op_str: str) -> None:
         self.__address = address
         self.__mnemonic = mnemonic
         self.__op_str = op_str
@@ -23,7 +46,7 @@ class Instruction:
         )
 
     @property
-    def address(self) -> int:
+    def address(self) -> Address:
         """Get the address of the instruction."""
         return self.__address
 
@@ -51,18 +74,18 @@ class Instruction:
 class BasicBlock:
     """Represent a basic block."""
 
-    def __init__(self, start_address: int, instructions: List[Instruction]) -> None:
+    def __init__(self, start_address: Address, instructions: List[Instruction]) -> None:
         self.__start_address = start_address
         self.__end_address = instructions[-1].address if instructions else start_address
         self.__instructions = instructions
 
     @property
-    def start_address(self) -> int:
+    def start_address(self) -> Address:
         """Get the start address of the basic block."""
         return self.__start_address
 
     @property
-    def end_address(self) -> int:
+    def end_address(self) -> Address:
         """Get the end address of the basic block."""
         return self.__end_address
 
@@ -76,7 +99,7 @@ class Function:
     """Represent a function."""
 
     def __init__(
-        self, name: str, start_address: int, instructions: List[Instruction]
+        self, name: str, start_address: Address, instructions: List[Instruction]
     ) -> None:
         self.__name = name
         self.__start_address = start_address
@@ -89,7 +112,7 @@ class Function:
         return self.__name
 
     @property
-    def start_address(self) -> int:
+    def start_address(self) -> Address:
         """Get the start address of the function."""
         return self.__start_address
 
