@@ -1,7 +1,6 @@
 """Fetch data from the ELF file using the elftools library."""
 
 import re
-from typing import Dict
 
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
