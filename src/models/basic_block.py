@@ -2,8 +2,8 @@
 
 from typing import List
 
-from src.models import Instruction
 from src.models.address import Address
+from src.models.instruction import Instruction
 
 
 class BasicBlock:
