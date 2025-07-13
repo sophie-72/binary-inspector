@@ -1,6 +1,6 @@
 """Generate the control flow graph of the main function."""
 
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from src.blocks import is_block_terminator
 from src.constants import JUMP_MNEMONIC
@@ -58,25 +58,38 @@ def _get_control_flow_graph(function: Function) -> Dict[BasicBlock, BasicBlockLi
             last_instruction.mnemonic.startswith("j")
             and last_instruction.mnemonic != JUMP_MNEMONIC
         ) or not is_block_terminator(last_instruction):
-            if i + 1 < len(function.basic_blocks):
-                graph[block].append(function.basic_blocks[i + 1])
+            _add_next_block(graph, function.basic_blocks, block, i)
 
         if last_instruction.mnemonic.startswith("j"):
-            target_address = _extract_jump_target(last_instruction)
-            if target_address:
-                target_block = _find_block_by_address(
-                    function.basic_blocks, target_address
-                )
-                if target_block and target_block not in graph[block]:
-                    graph[block].append(target_block)
+            _add_jump_target(graph, function.basic_blocks, block, last_instruction)
 
     return graph
 
 
-def _extract_jump_target(instruction: Instruction) -> Optional[int]:
-    if not instruction.mnemonic.startswith("j"):
-        return None
+def _add_next_block(
+    graph: Dict[BasicBlock, BasicBlockList],
+    basic_blocks: List[BasicBlock],
+    block: BasicBlock,
+    index: int,
+):
+    if index + 1 < len(basic_blocks):
+        graph[block].append(basic_blocks[index + 1])
 
+
+def _add_jump_target(
+    graph: Dict[BasicBlock, BasicBlockList],
+    basic_blocks: List[BasicBlock],
+    block: BasicBlock,
+    instruction: Instruction,
+):
+    target_address = _extract_jump_target(instruction)
+    if target_address:
+        target_block = _find_block_by_address(basic_blocks, target_address)
+        if target_block and target_block not in graph[block]:
+            graph[block].append(target_block)
+
+
+def _extract_jump_target(instruction: Instruction) -> Optional[int]:
     op_str = instruction.op_str.strip()
 
     if "0x" in op_str:
