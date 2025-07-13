@@ -1,10 +1,12 @@
+"""Represents an assembly instruction."""
+
 from typing import Optional
 
 from src.models.address import Address
 
 
 class Instruction:
-    """Represent an assembly instruction."""
+    """Represents an assembly instruction."""
 
     def __init__(self, address: Address, mnemonic: str, op_str: str) -> None:
         self.__address = address

@@ -1,9 +1,11 @@
+"""Represents a function."""
+
 from src.models.address import Address
 from src.types import InstructionList, BasicBlockList
 
 
 class Function:
-    """Represent a function."""
+    """Represents a function."""
 
     def __init__(
         self, name: str, start_address: Address, instructions: InstructionList

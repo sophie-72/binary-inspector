@@ -1,3 +1,6 @@
+"""Represents an address."""
+
+
 class Address:
     """Represents an address."""
 
