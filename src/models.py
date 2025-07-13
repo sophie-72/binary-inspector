@@ -20,9 +20,11 @@ class Address:
 
     @property
     def value(self) -> int:
+        """Get the address value."""
         return self.__value
 
     def to_hex_string(self) -> str:
+        """Convert the address to a hex string."""
         return hex(self.__value)
 
 

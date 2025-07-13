@@ -34,7 +34,8 @@ def _print_control_flow_graph(
         successors = graph.get(block, [])
 
         print(
-            f"Block {i}: {block.start_address.to_hex_string()} - {block.end_address.to_hex_string()}"
+            f"Block {i}: "
+            f"{block.start_address.to_hex_string()} - {block.end_address.to_hex_string()}"
         )
         print(f"  Instructions: {len(block.instructions)}")
         print(f"  Successors: {len(successors)}")
