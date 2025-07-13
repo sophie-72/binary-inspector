@@ -6,7 +6,6 @@ from src.blocks import is_block_terminator
 from src.constants import JUMP_MNEMONIC
 from src.models import Function, BasicBlock, Instruction
 from src.types import (
-    SectionNameToInstructionsMapping,
     BasicBlockList,
     FunctionNameToFunctionMapping,
 )
