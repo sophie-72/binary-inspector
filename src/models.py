@@ -81,6 +81,19 @@ class BasicBlock:
         self.__end_address = instructions[-1].address if instructions else start_address
         self.__instructions = instructions
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BasicBlock):
+            return False
+
+        return (
+            self.__start_address == other.__start_address
+            and self.__end_address == other.__end_address
+            and self.__instructions == other.__instructions
+        )
+
+    def __hash__(self) -> int:
+        return hash(self.__start_address)
+
     @property
     def start_address(self) -> Address:
         """Get the start address of the basic block."""
@@ -107,6 +120,17 @@ class Function:
         self.__start_address = start_address
         self.__instructions = instructions
         self.__basic_blocks: List[BasicBlock] = []
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Function):
+            return False
+
+        return (
+            self.name == other.name
+            and self.start_address == other.start_address
+            and self.instructions == other.instructions
+            and self.basic_blocks == other.basic_blocks
+        )
 
     @property
     def name(self) -> str:

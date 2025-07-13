@@ -40,14 +40,16 @@ def identify_functions(
             for j in range(function_start_index + 1, len(section_instructions)):
                 instruction = section_instructions[j]
 
-                # Stop if we hit another function or ret
+                # Stop if we hit another function
                 if (
                     instruction.address in function_symbols
                     and instruction.address != function_address
-                ) or instruction.mnemonic == "ret":
+                ):
                     break
 
                 function_end_index = j
+                if instruction.mnemonic == "ret":
+                    break
 
             function_instructions = section_instructions[
                 function_start_index : function_end_index + 1
