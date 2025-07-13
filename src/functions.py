@@ -1,7 +1,5 @@
 """Identify functions from instructions and function symbols."""
 
-from typing import Dict
-
 from src.blocks import identify_basic_blocks
 from src.constants import RETURN_MNEMONIC
 from src.models import Function, Address
@@ -9,13 +7,14 @@ from src.types import (
     SectionNameToInstructionsMapping,
     AddressToStringMapping,
     InstructionList,
+    FunctionNameToFunctionMapping,
 )
 
 
 def identify_functions(
     instructions: SectionNameToInstructionsMapping,
     function_symbols: AddressToStringMapping,
-) -> Dict[str, Function]:
+) -> FunctionNameToFunctionMapping:
     """
     Identify functions from instructions and function symbols.
     :param instructions: A dictionary mapping section names to lists of instructions.

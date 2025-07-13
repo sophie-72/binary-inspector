@@ -2,6 +2,7 @@ from elftools.elf.elffile import ELFFile
 
 from src.control_flow_graph import print_main_function_graph
 from src.elf_utils import ELFProcessor
+from src.functions import identify_functions
 from src.output import write_to_file
 from src.translation import translate_instructions
 
@@ -18,4 +19,5 @@ class Program:
 
         translate_instructions(instructions, relocations, strings)
         write_to_file(executable_name, instructions)
-        print_main_function_graph(instructions, function_symbols)
+        functions = identify_functions(instructions, function_symbols)
+        print_main_function_graph(functions)

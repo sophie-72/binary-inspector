@@ -4,25 +4,21 @@ from typing import Dict, Optional
 
 from src.blocks import is_block_terminator
 from src.constants import JUMP_MNEMONIC
-from src.functions import identify_functions
 from src.models import Function, BasicBlock, Instruction
 from src.types import (
     SectionNameToInstructionsMapping,
-    AddressToStringMapping,
     BasicBlockList,
+    FunctionNameToFunctionMapping,
 )
 
 
 def print_main_function_graph(
-    instructions: SectionNameToInstructionsMapping,
-    function_symbols: AddressToStringMapping,
+    functions: FunctionNameToFunctionMapping,
 ) -> None:
     """
     Print the control flow graph elements of the main function.
-    :param instructions: A dictionary mapping section names to lists of instructions.
-    :param function_symbols: A dictionary mapping function addresses to function names.
+    :param functions: A dictionary mapping function names to functions.
     """
-    functions = identify_functions(instructions, function_symbols)
     for function_name, function in functions.items():
         if function_name == "main":
             graph = _get_control_flow_graph(function)
