@@ -86,7 +86,12 @@ class TestTranslateInstructions(unittest.TestCase):
 
         translate_instructions(instructions, self.relocations, self.strings)
 
-        expected_instruction_with_addition_translation = f"{ANY_MNEMONIC} {Address(ANY_ADDRESS.value + any_other_address.value).to_hex_string()}"
+        expected_op_str = Address(
+            ANY_ADDRESS.value + any_other_address.value
+        ).to_hex_string()
+        expected_instruction_with_addition_translation = (
+            f"{ANY_MNEMONIC} {expected_op_str}"
+        )
         self.assertEqual(
             instructions[ANY_SECTION_NAME][0].translation,
             expected_instruction_with_addition_translation,
