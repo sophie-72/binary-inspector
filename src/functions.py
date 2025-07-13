@@ -15,7 +15,7 @@ def identify_functions(
     Identify functions from instructions and function symbols.
     :param instructions: A dictionary mapping section names to lists of instructions.
     :param function_symbols: A dictionary mapping function addresses to function names.
-    :return: A dictionary mapping function addresses to function objects.
+    :return: A dictionary mapping function names to function objects.
     """
     functions = {}
 
