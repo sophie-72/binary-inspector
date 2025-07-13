@@ -1,18 +1,21 @@
 """Translate assembly instructions into a more readable format."""
 
 import re
-from typing import Dict
 
 from src.models import Instruction
-from src.types import SectionNameToInstructionsMapping, InstructionList
+from src.types import (
+    SectionNameToInstructionsMapping,
+    InstructionList,
+    AddressToStringMapping,
+)
 
 HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 
 
 def translate_instructions(
     instructions: SectionNameToInstructionsMapping,
-    relocations: Dict[str, str],
-    strings: Dict[str, str],
+    relocations: AddressToStringMapping,
+    strings: AddressToStringMapping,
 ) -> None:
     """
     Translate some instructions into a more readable format.

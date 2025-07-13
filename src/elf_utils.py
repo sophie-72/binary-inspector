@@ -7,7 +7,7 @@ import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
 from src.models import Instruction
-from src.types import SectionNameToInstructionsMapping
+from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
 class ELFProcessor:
@@ -42,7 +42,7 @@ class ELFProcessor:
 
         return instructions
 
-    def get_file_relocations(self) -> Dict[str, str]:
+    def get_file_relocations(self) -> AddressToStringMapping:
         """
         Extract relocations from an ELF file.
         :return: A dictionary mapping relocation addresses to symbols.
@@ -61,7 +61,7 @@ class ELFProcessor:
 
         return relocations
 
-    def get_file_strings(self) -> Dict[str, str]:
+    def get_file_strings(self) -> AddressToStringMapping:
         """
         Extract strings from an ELF file.
         :return: A dictionary mapping string addresses to strings.
