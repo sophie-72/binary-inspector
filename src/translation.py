@@ -4,12 +4,13 @@ import re
 from typing import List, Dict
 
 from src.models import Instruction
+from src.types import SectionNameToInstructionsMapping
 
 HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 
 
 def translate_instructions(
-    instructions: Dict[str, List[Instruction]],
+    instructions: SectionNameToInstructionsMapping,
     relocations: Dict[str, str],
     strings: Dict[str, str],
 ) -> None:

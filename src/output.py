@@ -1,12 +1,10 @@
 """Write program output to a file."""
 
-from typing import List, Dict
-
-from src.models import Instruction
+from src.types import SectionNameToInstructionsMapping
 
 
 def write_to_file(
-    executable_name: str, instructions: Dict[str, List[Instruction]]
+    executable_name: str, instructions: SectionNameToInstructionsMapping
 ) -> None:
     """
     Write assembly instructions and translations to a file.

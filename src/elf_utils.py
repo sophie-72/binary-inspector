@@ -7,6 +7,7 @@ import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
 from src.models import Instruction
+from src.types import SectionNameToInstructionsMapping
 
 
 class ELFProcessor:
@@ -15,7 +16,7 @@ class ELFProcessor:
     def __init__(self, elffile: ELFFile):
         self.elffile = elffile
 
-    def get_file_instructions(self) -> Dict[str, List[Instruction]]:
+    def get_file_instructions(self) -> SectionNameToInstructionsMapping:
         """
         Extract assembly instructions from an ELF file.
         :return: A dictionary mapping section names to lists of instructions.
