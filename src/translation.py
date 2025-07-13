@@ -1,10 +1,10 @@
 """Translate assembly instructions into a more readable format."""
 
 import re
-from typing import List, Dict
+from typing import Dict
 
 from src.models import Instruction
-from src.types import SectionNameToInstructionsMapping
+from src.types import SectionNameToInstructionsMapping, InstructionList
 
 HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 
@@ -29,7 +29,7 @@ def translate_instructions(
 
 def _translate_instruction(
     instruction: Instruction,
-    instructions: List[Instruction],
+    instructions: InstructionList,
     relocations: dict,
     strings: dict,
 ) -> None:

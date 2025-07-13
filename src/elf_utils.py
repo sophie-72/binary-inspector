@@ -1,7 +1,7 @@
 """Fetch data from the ELF file using the elftools library."""
 
 import re
-from typing import List, Dict
+from typing import Dict
 
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
@@ -33,7 +33,7 @@ class ELFProcessor:
 
                 md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
 
-                section_instructions: List[Instruction] = []
+                section_instructions = []
                 for i in md.disasm(opcodes, addr):
                     instruction = Instruction(i.address, i.mnemonic, i.op_str)
                     section_instructions.append(instruction)

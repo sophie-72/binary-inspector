@@ -1,8 +1,7 @@
 """Identify basic blocks in a function."""
 
-from typing import List
-
-from src.models import Instruction, Function, BasicBlock
+from src.models import Function, BasicBlock
+from src.types import InstructionList
 from src.utils import is_block_terminator
 
 
@@ -11,10 +10,10 @@ def identify_basic_blocks(function: Function) -> None:
     Identify basic blocks in a function.
     :param function: The function
     """
-    blocks: List[BasicBlock] = []
-    current_block_instructions: List[Instruction] = []
+    blocks = []
+    current_block_instructions: InstructionList = []
 
-    def append_block(instructions: List[Instruction]) -> None:
+    def append_block(instructions: InstructionList) -> None:
         if instructions:
             block = BasicBlock(current_block_instructions[0].address, instructions)
             blocks.append(block)
@@ -32,7 +31,7 @@ def identify_basic_blocks(function: Function) -> None:
     function.basic_blocks = blocks
 
 
-def _is_jump_target(instructions: List[Instruction], index: int):
+def _is_jump_target(instructions: InstructionList, index: int):
     if index + 1 >= len(instructions):
         return False
 
