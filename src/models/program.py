@@ -1,4 +1,5 @@
 """Analyzes the provided file."""
+
 from builtins import _NotImplementedType
 
 from elftools.elf.elffile import ELFFile
