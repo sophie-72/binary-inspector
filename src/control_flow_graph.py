@@ -39,10 +39,15 @@ def _print_control_flow_graph(
         )
         print(f"  Instructions: {len(block.instructions)}")
         print(f"  Successors: {len(successors)}")
+        print(f"  Predecessors: {len(block.predecessors)}")
 
         for succ in successors:
             succ_index = function.basic_blocks.index(succ)
             print(f"    -> Block {succ_index} ({succ.start_address.to_hex_string()})")
+
+        for pred in block.predecessors:
+            pred_index = function.basic_blocks.index(pred)
+            print(f"    <- Block {pred_index} ({pred.start_address.to_hex_string()})")
 
         print()
 
@@ -87,6 +92,8 @@ def _add_jump_target(
         target_block = _find_block_by_address(basic_blocks, target_address)
         if target_block and target_block not in graph[block]:
             graph[block].append(target_block)
+            block.add_successor(target_block)
+            target_block.add_predecessor(block)
 
 
 def _extract_jump_target(instruction: Instruction) -> Optional[int]:
