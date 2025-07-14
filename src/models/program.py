@@ -8,7 +8,6 @@ from src.control_flow_graph import print_main_function_graph
 from src.elf_utils import ELFProcessor
 from src.functions import identify_functions
 from src.output import write_to_file
-from src.pattern_analysis import print_pattern_analysis
 from src.translation import translate_instructions
 
 
@@ -31,8 +30,6 @@ class Program:
         write_to_file(self.__executable_name, self.__instructions)
         functions = identify_functions(self.__instructions, self.__function_symbols)
         print_main_function_graph(functions)
-        for function_name, function in functions.items():
-            print_pattern_analysis(function)
 
     def display_analysis(self) -> _NotImplementedType:
         return NotImplemented
