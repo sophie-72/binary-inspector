@@ -58,5 +58,5 @@ class TestIdentifyFunctions(unittest.TestCase):
         }
         program = Program(file_content=file_content)
 
-        result = program._identify_functions()
+        result = program.identify_functions()
         self.assertEqual(result, expected_functions)

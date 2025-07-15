@@ -46,14 +46,14 @@ class Program:
         """
         translate_instructions(self.__instructions, self.__relocations, self.__strings)
         write_to_file(self.__executable_name, self.__instructions)
-        self.__functions = self._identify_functions()
+        self.__functions = self.identify_functions()
         print_main_function_graph(self.__functions)
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
         raise NotImplementedError
 
-    def _identify_functions(self) -> FunctionNameToFunctionMapping:
+    def identify_functions(self) -> FunctionNameToFunctionMapping:
         """
         Identify functions from instructions and function symbols.
         :return: A dictionary mapping function names to function objects.
