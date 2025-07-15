@@ -1,6 +1,5 @@
 import unittest
 
-from src.blocks import identify_basic_blocks
 from src.models import Function, Address
 from tests.fixtures import (
     ANY_ADDRESS,
@@ -17,7 +16,7 @@ class TestIdentifyBasicBlocks(unittest.TestCase):
             instructions=AN_INSTRUCTION_LIST,
         )
 
-        identify_basic_blocks(function)
+        function.identify_basic_blocks()
 
         self.assertEqual(len(function.basic_blocks), 2)
         self.assertEqual(function.basic_blocks[0].start_address, Address(0x1000))

@@ -1,6 +1,5 @@
 """Identify functions from instructions and function symbols."""
 
-from src.blocks import identify_basic_blocks
 from src.constants import RETURN_MNEMONIC
 from src.models import Function, Address
 from src.types import (
@@ -47,7 +46,7 @@ def identify_functions(
                 current_function = Function(
                     function_name, function_address, function_instructions
                 )
-                identify_basic_blocks(current_function)
+                current_function.identify_basic_blocks()
 
                 functions[function_name] = current_function
 
