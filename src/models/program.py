@@ -7,6 +7,7 @@ from src.models import ELFProcessor
 from src.functions import identify_functions
 from src.output import write_to_file
 from src.translation import translate_instructions
+from src.types import FunctionNameToFunctionMapping
 
 
 class Program:
@@ -22,6 +23,7 @@ class Program:
             self.__relocations = elf_processor.get_file_relocations()
             self.__strings = elf_processor.get_file_strings()
             self.__function_symbols = elf_processor.get_function_names()
+            self.__functions: FunctionNameToFunctionMapping = {}
 
     def analyze(self) -> None:
         """
@@ -30,8 +32,10 @@ class Program:
         """
         translate_instructions(self.__instructions, self.__relocations, self.__strings)
         write_to_file(self.__executable_name, self.__instructions)
-        functions = identify_functions(self.__instructions, self.__function_symbols)
-        print_main_function_graph(functions)
+        self.__functions = identify_functions(
+            self.__instructions, self.__function_symbols
+        )
+        print_main_function_graph(self.__functions)
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
