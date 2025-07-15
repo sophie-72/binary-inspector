@@ -79,6 +79,8 @@ def _add_next_block(
 ):
     if index + 1 < len(basic_blocks):
         graph[block].append(basic_blocks[index + 1])
+        block.add_successor(basic_blocks[index + 1])
+        basic_blocks[index + 1].add_predecessor(block)
 
 
 def _add_jump_target(
