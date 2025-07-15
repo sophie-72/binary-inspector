@@ -2,12 +2,16 @@
 
 from elftools.elf.elffile import ELFFile
 
+from src.constants import RETURN_MNEMONIC
 from src.control_flow_graph import print_main_function_graph
-from src.models import ELFProcessor
-from src.functions import identify_functions
+from src.models import ELFProcessor, Address, Function
 from src.output import write_to_file
 from src.translation import translate_instructions
-from src.types import FunctionNameToFunctionMapping
+from src.types import (
+    FunctionNameToFunctionMapping,
+    InstructionList,
+    AddressToStringMapping,
+)
 
 
 class Program:
@@ -32,11 +36,82 @@ class Program:
         """
         translate_instructions(self.__instructions, self.__relocations, self.__strings)
         write_to_file(self.__executable_name, self.__instructions)
-        self.__functions = identify_functions(
-            self.__instructions, self.__function_symbols
-        )
+        self.__functions = self._identify_functions()
         print_main_function_graph(self.__functions)
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
         raise NotImplementedError
+
+    def _identify_functions(self) -> FunctionNameToFunctionMapping:
+        """
+        Identify functions from instructions and function symbols.
+        :return: A dictionary mapping function names to function objects.
+        """
+        functions = {}
+
+        sorted_addresses = sorted(self.__function_symbols.keys(), key=lambda x: x.value)
+
+        for section_instructions in self.__instructions.values():
+            for function_address in sorted_addresses:
+                function_name = self.__function_symbols[function_address]
+
+                function_start_index = _get_function_start_index(
+                    section_instructions, function_address
+                )
+
+                if function_start_index is not None:
+                    function_end_index = _get_function_end_index(
+                        function_start_index,
+                        section_instructions,
+                        self.__function_symbols,
+                        function_address,
+                    )
+
+                    function_instructions = section_instructions[
+                        function_start_index : function_end_index + 1
+                    ]
+                    current_function = Function(
+                        function_name, function_address, function_instructions
+                    )
+                    current_function.identify_basic_blocks()
+
+                    functions[function_name] = current_function
+
+        return functions
+
+
+def _get_function_start_index(
+    section_instructions: InstructionList, function_address: Address
+):
+    function_start_index = None
+    for i, instruction in enumerate(section_instructions):
+        if instruction.address == function_address:
+            function_start_index = i
+            break
+
+    return function_start_index
+
+
+def _get_function_end_index(
+    function_start_index: int,
+    section_instructions: InstructionList,
+    function_symbols: AddressToStringMapping,
+    function_address: Address,
+):
+    function_end_index = function_start_index
+    for j in range(function_start_index + 1, len(section_instructions)):
+        instruction = section_instructions[j]
+
+        # Stop if we hit another function
+        if (
+            instruction.address in function_symbols
+            and instruction.address != function_address
+        ):
+            break
+
+        function_end_index = j
+        if instruction.mnemonic == RETURN_MNEMONIC:
+            break
+
+    return function_end_index

@@ -1,7 +1,7 @@
 import unittest
 
-from src.functions import identify_functions
 from src.models import Address, Function, BasicBlock
+from src.models.program import Program
 from tests.fixtures import (
     A_FUNCTION_NAME,
     AN_INSTRUCTION_LIST,
@@ -16,6 +16,9 @@ class TestIdentifyFunctions(unittest.TestCase):
             Address(0x1002): another_function_name,
             Address(0x1000): A_FUNCTION_NAME,
         }
+        program = Program.__new__(Program)
+        program._Program__instructions = {any_section_name: AN_INSTRUCTION_LIST}
+        program._Program__function_symbols = function_symbols
 
         expected_first_function_instructions = [
             AN_INSTRUCTION_LIST[0],
@@ -52,7 +55,5 @@ class TestIdentifyFunctions(unittest.TestCase):
             another_function_name: expected_second_function,
         }
 
-        result = identify_functions(
-            {any_section_name: AN_INSTRUCTION_LIST}, function_symbols
-        )
+        result = program._identify_functions()
         self.assertEqual(result, expected_functions)
