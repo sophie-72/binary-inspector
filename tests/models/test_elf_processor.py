@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.elf_utils import ELFProcessor
+from src.models.elf_processor import ELFProcessor
 from src.models import Instruction, Address
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
 
 
-class TestElfUtils(unittest.TestCase):
+class TestElfProcessor(unittest.TestCase):
     def setUp(self):
         self.mock_elf_file = MagicMock()
         self.elf_processor = ELFProcessor(self.mock_elf_file)
