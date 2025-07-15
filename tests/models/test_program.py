@@ -16,9 +16,6 @@ class TestIdentifyFunctions(unittest.TestCase):
             Address(0x1002): another_function_name,
             Address(0x1000): A_FUNCTION_NAME,
         }
-        program = Program.__new__(Program)
-        program._Program__instructions = {any_section_name: AN_INSTRUCTION_LIST}
-        program._Program__function_symbols = function_symbols
 
         expected_first_function_instructions = [
             AN_INSTRUCTION_LIST[0],
@@ -54,6 +51,12 @@ class TestIdentifyFunctions(unittest.TestCase):
             A_FUNCTION_NAME: expected_first_function,
             another_function_name: expected_second_function,
         }
+
+        file_content = {
+            "instructions": {any_section_name: AN_INSTRUCTION_LIST},
+            "function_symbols": function_symbols,
+        }
+        program = Program(file_content=file_content)
 
         result = program._identify_functions()
         self.assertEqual(result, expected_functions)

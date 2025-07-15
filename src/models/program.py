@@ -17,17 +17,27 @@ from src.types import (
 class Program:
     """Analyzes the provided file."""
 
-    def __init__(self, executable_name):
-        self.__executable_name = executable_name
+    def __init__(
+        self,
+        executable_name=None,
+        file_content=None,
+    ):
+        if executable_name:
+            self.__executable_name = executable_name
+            with open(executable_name, "rb") as f:
+                elffile = ELFFile(f)
+                elf_processor = ELFProcessor(elffile)
+                self.__instructions = elf_processor.get_file_instructions()
+                self.__relocations = elf_processor.get_file_relocations()
+                self.__strings = elf_processor.get_file_strings()
+                self.__function_symbols = elf_processor.get_function_names()
+        else:
+            self.__instructions = file_content.get("instructions", None)
+            self.__relocations = file_content.get("relocations", None)
+            self.__strings = file_content.get("strings", None)
+            self.__function_symbols = file_content.get("function_symbols", None)
 
-        with open(executable_name, "rb") as f:
-            elffile = ELFFile(f)
-            elf_processor = ELFProcessor(elffile)
-            self.__instructions = elf_processor.get_file_instructions()
-            self.__relocations = elf_processor.get_file_relocations()
-            self.__strings = elf_processor.get_file_strings()
-            self.__function_symbols = elf_processor.get_function_names()
-            self.__functions: FunctionNameToFunctionMapping = {}
+        self.__functions: FunctionNameToFunctionMapping = {}
 
     def analyze(self) -> None:
         """
