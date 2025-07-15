@@ -5,7 +5,8 @@ import re
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from src.models import Instruction, Address
+from src.models.address import Address
+from src.models.instruction import Instruction
 from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
