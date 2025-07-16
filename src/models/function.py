@@ -51,11 +51,6 @@ class Function:
         """Get the basic blocks of the function."""
         return self.__basic_blocks
 
-    @basic_blocks.setter
-    def basic_blocks(self, basic_blocks: List[BasicBlock]) -> None:
-        """Set the basic blocks of the function."""
-        self.__basic_blocks = basic_blocks
-
     def identify_basic_blocks(self) -> None:
         """Identify basic blocks in the function."""
         blocks = []
@@ -76,7 +71,7 @@ class Function:
                 current_block_instructions = []
 
         append_block(current_block_instructions)
-        self.basic_blocks = blocks
+        self.__basic_blocks = blocks
 
     def identify_successors_and_predecessors(self) -> None:
         """Identify successors and predecessors of each basic block in the function."""
