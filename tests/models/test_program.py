@@ -1,7 +1,7 @@
 import unittest
 
 from src.models import Address, Function
-from src.models.program import Program
+from src.models.program import Program, FileContent
 from tests.fixtures import (
     A_FUNCTION_NAME,
     AN_INSTRUCTION_LIST,
@@ -36,10 +36,10 @@ class TestIdentifyFunctions(unittest.TestCase):
             instructions=expected_second_function_instructions,
         )
 
-        file_content = {
-            "instructions": {any_section_name: AN_INSTRUCTION_LIST},
-            "function_symbols": function_symbols,
-        }
+        file_content = FileContent(
+            instructions={any_section_name: AN_INSTRUCTION_LIST},
+            function_symbols=function_symbols,
+        )
         program = Program(file_content=file_content)
 
         result = program.identify_functions()

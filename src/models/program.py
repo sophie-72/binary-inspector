@@ -1,5 +1,8 @@
 """Analyzes the provided file."""
 
+from dataclasses import dataclass
+from typing import Optional
+
 from elftools.elf.elffile import ELFFile
 
 from src.constants import RETURN_MNEMONIC
@@ -11,7 +14,18 @@ from src.types import (
     FunctionNameToFunctionMapping,
     InstructionList,
     AddressToStringMapping,
+    SectionNameToInstructionsMapping,
 )
+
+
+@dataclass
+class FileContent:
+    """ELF file content (currently only used in tests)."""
+
+    instructions: Optional[SectionNameToInstructionsMapping] = None
+    relocations: Optional[AddressToStringMapping] = None
+    strings: Optional[AddressToStringMapping] = None
+    function_symbols: Optional[AddressToStringMapping] = None
 
 
 class Program:
@@ -19,8 +33,8 @@ class Program:
 
     def __init__(
         self,
-        executable_name=None,
-        file_content=None,
+        executable_name: Optional[str] = None,
+        file_content: Optional[FileContent] = None,
     ):
         if executable_name:
             self.__executable_name = executable_name
@@ -31,11 +45,15 @@ class Program:
                 self.__relocations = elf_processor.get_file_relocations()
                 self.__strings = elf_processor.get_file_strings()
                 self.__function_symbols = elf_processor.get_function_names()
+        elif file_content:
+            self.__instructions = file_content.instructions or {}
+            self.__relocations = file_content.relocations or {}
+            self.__strings = file_content.strings or {}
+            self.__function_symbols = file_content.function_symbols or {}
         else:
-            self.__instructions = file_content.get("instructions", None)
-            self.__relocations = file_content.get("relocations", None)
-            self.__strings = file_content.get("strings", None)
-            self.__function_symbols = file_content.get("function_symbols", None)
+            raise RuntimeError(
+                "Either an executable name or a file content must be provided."
+            )
 
         self.__functions: FunctionNameToFunctionMapping = {}
 
