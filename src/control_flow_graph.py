@@ -30,12 +30,10 @@ def _print_control_flow_graph(function: Function) -> None:
 
         for succ in block.successors:
             succ_index = function.basic_blocks.index(succ)
-            print(
-                f"    -> Block {succ_index} ({succ.start_address.to_hex_string()})")
+            print(f"    -> Block {succ_index} ({succ.start_address.to_hex_string()})")
 
         for pred in block.predecessors:
             pred_index = function.basic_blocks.index(pred)
-            print(
-                f"    <- Block {pred_index} ({pred.start_address.to_hex_string()})")
+            print(f"    <- Block {pred_index} ({pred.start_address.to_hex_string()})")
 
         print()
