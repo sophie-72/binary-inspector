@@ -27,9 +27,6 @@ class BasicBlock:
             and self.instructions == other.instructions
         )
 
-    def __hash__(self) -> int:
-        return hash(self.__start_address)
-
     @property
     def start_address(self) -> Address:
         """Get the start address of the basic block."""
