@@ -11,7 +11,7 @@ def print_main_function_graph(
     Print the control flow graph elements of the main function.
     :param functions: A dictionary mapping function names to functions.
     """
-    for function_name, function in functions.items():
+    for function in functions.values():
         _print_control_flow_graph(function)
 
 
