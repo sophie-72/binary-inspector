@@ -85,6 +85,7 @@ class Program:
                         function_name, function_address, function_instructions
                     )
                     current_function.identify_basic_blocks()
+                    current_function.identify_successors_and_predecessors()
 
                     functions[function_name] = current_function
 
