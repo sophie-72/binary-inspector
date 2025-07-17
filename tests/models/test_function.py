@@ -12,7 +12,20 @@ from tests.fixtures import (
 
 
 class TestFunction(unittest.TestCase):
-    def test_function(self):
+    def test_identify_basic_blocks(self):
+        function = Function(
+            name=A_FUNCTION_NAME,
+            start_address=ANY_ADDRESS,
+            instructions=AN_INSTRUCTION_LIST,
+        )
+
+        function.identify_basic_blocks()
+
+        self.assertEqual(len(function.basic_blocks), 2)
+        self.assertEqual(function.basic_blocks[0].start_address, Address(0x1000))
+        self.assertEqual(function.basic_blocks[1].start_address, Address(0x1002))
+
+    def test_identify_successors_and_predecessors(self):
         an_instruction_list_with_multiple_blocks = AN_INSTRUCTION_LIST + [
             Instruction(address=Address(0x1004), mnemonic="je", op_str="0x1000"),
             Instruction(
