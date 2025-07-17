@@ -89,19 +89,19 @@ class Function:
 
 
 def _is_jump_target(instructions: List[Instruction], index: int):
-    if index + 1 >= len(instructions):
+    if index >= len(instructions):
         return False
 
-    next_address = instructions[index + 1].address
+    current_address = instructions[index].address
 
-    for previous_instruction in instructions[: index + 1]:
+    for previous_instruction in instructions[:index]:
         if (
             previous_instruction.mnemonic.startswith("j")
             and "0x" in previous_instruction.op_str
         ):
             try:
                 target = Address(int(previous_instruction.op_str.strip(), 16))
-                if target == next_address:
+                if target == current_address:
                     return True
             except ValueError:
                 pass

@@ -9,7 +9,11 @@ A_FUNCTION_NAME = "function"
 A_STRING = "Hello, World!"
 AN_INSTRUCTION_LIST = [
     Instruction(address=Address(0x1000), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR),
-    Instruction(address=Address(0x1001), mnemonic=JUMP_MNEMONIC, op_str=ANY_OP_STR),
+    Instruction(
+        address=Address(0x1001),
+        mnemonic=JUMP_MNEMONIC,
+        op_str=ANY_ADDRESS.to_hex_string(),
+    ),
     Instruction(address=Address(0x1002), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR),
     Instruction(address=Address(0x1003), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR),
 ]
