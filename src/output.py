@@ -61,7 +61,7 @@ def display_functions_control_flow_graph(
                 f"{translation}\n"
             )
         label = f"Block {i}\\n{instructions}"
-        dot.node(str(i), label)
+        dot.node(str(i), label, shape="box", style="rounded")
 
     for i, block in enumerate(function.basic_blocks):
         for successor in block.successors:
