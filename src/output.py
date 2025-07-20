@@ -19,7 +19,9 @@ def write_to_file(
     :param executable_name: The ELF file path.
     :param instructions: A dictionary mapping section names to lists of instructions.
     """
-    filename = f"{executable_name}.asm"
+
+    output_directory = _get_output_directory(executable_name)
+    filename = f"{output_directory}.asm"
 
     with open(filename, "w", encoding="utf-8") as file:
         for section_name, section_instructions in instructions.items():
@@ -49,8 +51,7 @@ def export_all_control_flow_graphs(
     :param executable_name: The ELF file path.
     :param functions: A dictionary mapping function names to functions.
     """
-    output_directory = os.path.join("graphs", executable_name)
-    os.makedirs(output_directory, exist_ok=True)
+    output_directory = _get_output_directory(executable_name)
 
     for function in functions.values():
         _export_function_control_flow_graph(function, output_directory)
@@ -100,3 +101,9 @@ def _export_function_control_flow_graph(
     dot.render(filename, cleanup=True, format="png")
 
     print(f"Control flow graph of the {function.name} function saved to {filename}.png")
+
+
+def _get_output_directory(executable_name: str) -> str:
+    output_directory = os.path.join("output", executable_name)
+    os.makedirs(output_directory, exist_ok=True)
+    return output_directory
