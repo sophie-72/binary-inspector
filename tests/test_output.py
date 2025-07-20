@@ -29,7 +29,7 @@ class TestWriteToFile(unittest.TestCase):
         write_to_file(any_executable_name, instructions)
 
         mock_file.assert_called_once_with(
-            f"{any_executable_name}.asm", "w", encoding="utf-8"
+            f"output/{any_executable_name}.asm", "w", encoding="utf-8"
         )
 
         handle = mock_file()
