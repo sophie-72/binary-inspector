@@ -3,7 +3,7 @@
 import re
 
 from src.models import Instruction, Address
-from src.types import (
+from src.custom_types import (
     SectionNameToInstructionsMapping,
     InstructionList,
     AddressToStringMapping,

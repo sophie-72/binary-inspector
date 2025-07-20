@@ -7,15 +7,15 @@ from elftools.elf.elffile import ELFFile
 
 from src.constants import RETURN_MNEMONIC
 from src.control_flow_graph import print_main_function_graph
-from src.models import ELFProcessor, Address, Function
-from src.output import write_to_file
-from src.translation import translate_instructions
-from src.types import (
+from src.custom_types import (
     FunctionNameToFunctionMapping,
     InstructionList,
     AddressToStringMapping,
     SectionNameToInstructionsMapping,
 )
+from src.models import ELFProcessor, Address, Function
+from src.output import write_to_file
+from src.translation import translate_instructions
 
 
 @dataclass

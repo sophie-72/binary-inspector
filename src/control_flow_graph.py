@@ -1,7 +1,7 @@
 """Print the control flow graph of the functions."""
 
 from src.models import Function
-from src.types import FunctionNameToFunctionMapping
+from src.custom_types import FunctionNameToFunctionMapping
 
 
 def print_main_function_graph(

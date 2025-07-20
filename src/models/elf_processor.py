@@ -5,9 +5,9 @@ import re
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
+from src.custom_types import SectionNameToInstructionsMapping, AddressToStringMapping
 from src.models.address import Address
 from src.models.instruction import Instruction
-from src.types import SectionNameToInstructionsMapping, AddressToStringMapping
 
 
 class ELFProcessor:

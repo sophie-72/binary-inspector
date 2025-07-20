@@ -1,6 +1,6 @@
 """Write program output to a file."""
 
-from src.types import SectionNameToInstructionsMapping
+from src.custom_types import SectionNameToInstructionsMapping
 
 
 def write_to_file(
