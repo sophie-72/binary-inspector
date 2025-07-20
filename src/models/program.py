@@ -3,9 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-import streamlit as st
 from elftools.elf.elffile import ELFFile
-from graphviz import Digraph  # type: ignore
 
 from src.constants import RETURN_MNEMONIC
 from src.custom_types import (
@@ -15,7 +13,7 @@ from src.custom_types import (
     SectionNameToInstructionsMapping,
 )
 from src.models import ELFProcessor, Address, Function
-from src.output import write_to_file
+from src.output import write_to_file, display_functions_control_flow_graph
 from src.translation import translate_instructions
 
 
@@ -79,36 +77,7 @@ class Program:
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
-        st.title("Binary Inspector: Control Flow Graph Visualizer")
-
-        function_names = list(self.functions.keys())
-        selected_function = st.selectbox("Select a function", function_names)
-
-        function = self.functions[selected_function]
-
-        dot = Digraph(comment=f"CFG for {selected_function}")
-
-        for i, block in enumerate(function.basic_blocks):
-            instructions = ""
-            for instruction in block.instructions:
-                translation = (
-                    f"; {instruction.translation}" if instruction.translation else ""
-                )
-                instructions += (
-                    f"{instruction.address.to_hex_string()}:\t"
-                    f"{instruction.mnemonic}\t"
-                    f"{instruction.op_str}\t"
-                    f"{translation}\n"
-                )
-            label = f"Block {i}\\n{instructions}"
-            dot.node(str(i), label)
-
-        for i, block in enumerate(function.basic_blocks):
-            for successor in block.successors:
-                j = function.basic_blocks.index(successor)
-                dot.edge(str(i), str(j))
-
-        st.graphviz_chart(dot)
+        display_functions_control_flow_graph(self.functions)
 
     def identify_functions(self) -> FunctionNameToFunctionMapping:
         """

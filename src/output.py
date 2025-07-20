@@ -1,6 +1,12 @@
 """Write program output to a file."""
 
-from src.custom_types import SectionNameToInstructionsMapping
+import streamlit as st
+from graphviz import Digraph  # type: ignore
+
+from src.custom_types import (
+    SectionNameToInstructionsMapping,
+    FunctionNameToFunctionMapping,
+)
 
 
 def write_to_file(
@@ -28,3 +34,38 @@ def write_to_file(
                         f"{instruction.op_str}\t"
                         f"{translation}\n"
                     )
+
+
+def display_functions_control_flow_graph(
+    functions: FunctionNameToFunctionMapping,
+) -> None:
+    st.title("Binary Inspector: Control Flow Graph Visualizer")
+
+    function_names = list(functions.keys())
+    selected_function = st.selectbox("Select a function", function_names)
+
+    function = functions[selected_function]
+
+    dot = Digraph(comment=f"CFG for {selected_function}")
+
+    for i, block in enumerate(function.basic_blocks):
+        instructions = ""
+        for instruction in block.instructions:
+            translation = (
+                f"; {instruction.translation}" if instruction.translation else ""
+            )
+            instructions += (
+                f"{instruction.address.to_hex_string()}:\t"
+                f"{instruction.mnemonic}\t"
+                f"{instruction.op_str}\t"
+                f"{translation}\n"
+            )
+        label = f"Block {i}\\n{instructions}"
+        dot.node(str(i), label)
+
+    for i, block in enumerate(function.basic_blocks):
+        for successor in block.successors:
+            j = function.basic_blocks.index(successor)
+            dot.edge(str(i), str(j))
+
+    st.graphviz_chart(dot)
