@@ -51,7 +51,6 @@ def _translate_instruction(
     line = _translate_relocation(line, relocations)
     line = _translate_function_call(line, function_symbols)
     line = _translate_strings(line, strings)
-    line = _translate_printable_character(line)
 
     if line != line_before_translation:
         instruction.translation = line
@@ -125,19 +124,5 @@ def _translate_strings(line, strings):
 
         if string:
             line = line.replace(address_string.group(), '"' + string + '"')
-
-    return line
-
-
-def _translate_printable_character(line):
-    range_min = 32
-    range_max = 126
-    hex_character = re.search("0x[0-9a-f]{2}$", line)
-    if hex_character:
-        decimal_value = int(hex_character.group(), 16)
-
-        if range_min <= decimal_value <= range_max:
-            character = chr(decimal_value)
-            line = line.replace(hex_character.group(), character)
 
     return line

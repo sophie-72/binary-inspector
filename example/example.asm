@@ -27,7 +27,7 @@
 0x10e7:	lea	rsi, [rip + 0x2f2a]	; lea rsi, [0x4018]
 0x10ee:	sub	rsi, rdi	
 0x10f1:	mov	rax, rsi	
-0x10f4:	shr	rsi, 0x3f	; shr rsi, ?
+0x10f4:	shr	rsi, 0x3f	
 0x10f8:	sar	rax, 3	
 0x10fc:	add	rsi, rax	
 0x10ff:	sar	rsi, 1	
@@ -101,7 +101,7 @@
 0x11f2:	endbr64		
 0x11f6:	push	rbp	
 0x11f7:	mov	rbp, rsp	
-0x11fa:	sub	rsp, 0x20	; sub rsp,  
+0x11fa:	sub	rsp, 0x20	
 0x11fe:	mov	dword ptr [rbp - 0x14], edi	
 0x1201:	mov	dword ptr [rbp - 4], 0	
 0x1208:	jmp	0x1236	
@@ -201,7 +201,7 @@
 0x1341:	endbr64		
 0x1345:	push	rbp	
 0x1346:	mov	rbp, rsp	
-0x1349:	sub	rsp, 0x20	; sub rsp,  
+0x1349:	sub	rsp, 0x20	
 0x134d:	mov	dword ptr [rbp - 0x14], edi	
 0x1350:	mov	qword ptr [rbp - 0x20], rsi	; mov memory[rbp - 0x20], rsi
 0x1354:	lea	rax, [rip + 0xd57]	; lea rax, ["Binary Inspector Test Program"]

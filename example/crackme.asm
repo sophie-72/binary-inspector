@@ -27,7 +27,7 @@
 0x10e7:	lea	rsi, [rip + 0x2f4a]	; lea rsi, [0x4038]
 0x10ee:	sub	rsi, rdi	
 0x10f1:	mov	rax, rsi	
-0x10f4:	shr	rsi, 0x3f	; shr rsi, ?
+0x10f4:	shr	rsi, 0x3f	
 0x10f8:	sar	rax, 3	
 0x10fc:	add	rsi, rax	
 0x10ff:	sar	rsi, 1	
@@ -65,28 +65,28 @@
 0x1186:	call	0x1070	
 0x118b:	mov	qword ptr [rbp - 0x10], rax	; mov memory[rbp - 0x10], rax
 0x118f:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
-0x1193:	mov	byte ptr [rax], 0x70	; mov memory[rax], p
+0x1193:	mov	byte ptr [rax], 0x70	; mov memory[rax], 0x70
 0x1196:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x119a:	add	rax, 1	
-0x119e:	mov	byte ptr [rax], 0x61	; mov memory[rax], a
+0x119e:	mov	byte ptr [rax], 0x61	; mov memory[rax], 0x61
 0x11a1:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11a5:	add	rax, 2	
-0x11a9:	mov	byte ptr [rax], 0x73	; mov memory[rax], s
+0x11a9:	mov	byte ptr [rax], 0x73	; mov memory[rax], 0x73
 0x11ac:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11b0:	add	rax, 3	
-0x11b4:	mov	byte ptr [rax], 0x73	; mov memory[rax], s
+0x11b4:	mov	byte ptr [rax], 0x73	; mov memory[rax], 0x73
 0x11b7:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11bb:	add	rax, 4	
-0x11bf:	mov	byte ptr [rax], 0x77	; mov memory[rax], w
+0x11bf:	mov	byte ptr [rax], 0x77	; mov memory[rax], 0x77
 0x11c2:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11c6:	add	rax, 5	
-0x11ca:	mov	byte ptr [rax], 0x6f	; mov memory[rax], o
+0x11ca:	mov	byte ptr [rax], 0x6f	; mov memory[rax], 0x6f
 0x11cd:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11d1:	add	rax, 6	
-0x11d5:	mov	byte ptr [rax], 0x72	; mov memory[rax], r
+0x11d5:	mov	byte ptr [rax], 0x72	; mov memory[rax], 0x72
 0x11d8:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11dc:	add	rax, 7	
-0x11e0:	mov	byte ptr [rax], 0x64	; mov memory[rax], d
+0x11e0:	mov	byte ptr [rax], 0x64	; mov memory[rax], 0x64
 0x11e3:	mov	rax, qword ptr [rbp - 0x10]	; mov rax, memory[rbp - 0x10]
 0x11e7:	add	rax, 8	
 0x11eb:	mov	byte ptr [rax], 0	; mov memory[rax], 0
