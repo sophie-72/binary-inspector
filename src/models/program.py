@@ -5,7 +5,7 @@ from typing import Optional
 
 import streamlit as st
 from elftools.elf.elffile import ELFFile
-from graphviz import Digraph
+from graphviz import Digraph  # type: ignore
 
 from src.constants import RETURN_MNEMONIC
 from src.custom_types import (
