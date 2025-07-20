@@ -20,17 +20,6 @@ class Function:
         self.__instructions = instructions
         self.__basic_blocks: List[BasicBlock] = []
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Function):
-            return False
-
-        return (
-            self.name == other.name
-            and self.start_address == other.start_address
-            and self.instructions == other.instructions
-            and self.basic_blocks == other.basic_blocks
-        )
-
     @property
     def name(self) -> str:
         """Get the name of the function."""
