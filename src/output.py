@@ -42,6 +42,11 @@ def export_all_control_flow_graphs(
     executable_name: str,
     functions: FunctionNameToFunctionMapping,
 ) -> None:
+    """
+    Export all control flow graphs to PNG files.
+    :param executable_name: The ELF file path.
+    :param functions: A dictionary mapping function names to functions.
+    """
     output_directory = os.path.join("graphs", executable_name)
     os.makedirs(output_directory, exist_ok=True)
 
