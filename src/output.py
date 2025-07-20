@@ -16,7 +16,7 @@ def write_to_file(
 ) -> None:
     """
     Write assembly instructions and translations to a file.
-    :param executable_name: The ELF file name.
+    :param executable_name: The ELF file path.
     :param instructions: A dictionary mapping section names to lists of instructions.
     """
     filename = f"{executable_name}.asm"
@@ -36,6 +36,8 @@ def write_to_file(
                         f"{instruction.op_str}\t"
                         f"{translation}\n"
                     )
+
+    print(f"Instructions of the .text section written to {filename}")
 
 
 def export_all_control_flow_graphs(
@@ -96,3 +98,5 @@ def _export_function_control_flow_graph(
 
     filename = f"{output_directory}/{function.name}"
     dot.render(filename, cleanup=True, format="png")
+
+    print(f"Control flow graph of the {function.name} function saved to {filename}")
