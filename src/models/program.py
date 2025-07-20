@@ -3,10 +3,11 @@
 from dataclasses import dataclass
 from typing import Optional
 
+import streamlit as st
 from elftools.elf.elffile import ELFFile
+from graphviz import Digraph
 
 from src.constants import RETURN_MNEMONIC
-from src.control_flow_graph import print_main_function_graph
 from src.custom_types import (
     FunctionNameToFunctionMapping,
     InstructionList,
@@ -57,6 +58,10 @@ class Program:
 
         self.__functions: FunctionNameToFunctionMapping = {}
 
+    @property
+    def functions(self) -> FunctionNameToFunctionMapping:
+        return self.__functions
+
     def analyze(self) -> None:
         """
         Analyze the ELF file based on instructions, relocations, strings and
@@ -65,11 +70,39 @@ class Program:
         translate_instructions(self.__instructions, self.__relocations, self.__strings)
         write_to_file(self.__executable_name, self.__instructions)
         self.__functions = self.identify_functions()
-        print_main_function_graph(self.__functions)
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
-        raise NotImplementedError
+        st.title("Binary Inspector: Control Flow Graph Visualizer")
+
+        function_names = list(self.functions.keys())
+        selected_function = st.selectbox("Select a function", function_names)
+
+        function = self.functions[selected_function]
+
+        dot = Digraph(comment=f"CFG for {selected_function}")
+
+        for i, block in enumerate(function.basic_blocks):
+            instructions = ""
+            for instruction in block.instructions:
+                translation = (
+                    f"; {instruction.translation}" if instruction.translation else ""
+                )
+                instructions += (
+                    f"{instruction.address.to_hex_string()}:\t"
+                    f"{instruction.mnemonic}\t"
+                    f"{instruction.op_str}\t"
+                    f"{translation}\n"
+                )
+            label = f"Block {i}\\n{instructions}"
+            dot.node(str(i), label)
+
+        for i, block in enumerate(function.basic_blocks):
+            for successor in block.successors:
+                j = function.basic_blocks.index(successor)
+                dot.edge(str(i), str(j))
+
+        st.graphviz_chart(dot)
 
     def identify_functions(self) -> FunctionNameToFunctionMapping:
         """

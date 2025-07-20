@@ -9,6 +9,7 @@ if __name__ == "__main__":
         executable = sys.argv[1]
         program = Program(executable)
         program.analyze()
+        program.display_analysis()
     else:
         print("Usage: main.py <executable>")
         sys.exit(1)
