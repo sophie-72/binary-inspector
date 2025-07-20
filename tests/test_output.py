@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import mock_open, patch
 
 from src.models import Instruction
-from src.output import write_to_file
+from src.output import write_instructions_to_file
 from tests.fixtures import ANY_ADDRESS
 
 
@@ -26,7 +26,7 @@ class TestWriteToFile(unittest.TestCase):
             ".other_section": [an_instruction_without_a_translation],
         }
 
-        write_to_file(any_executable_name, instructions)
+        write_instructions_to_file(any_executable_name, instructions)
 
         mock_file.assert_called_once_with(
             f"output/{any_executable_name}.asm", "w", encoding="utf-8"

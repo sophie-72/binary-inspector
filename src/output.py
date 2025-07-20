@@ -11,7 +11,7 @@ from src.custom_types import (
 from src.models import Function
 
 
-def write_to_file(
+def write_instructions_to_file(
     executable_name: str, instructions: SectionNameToInstructionsMapping
 ) -> None:
     """
