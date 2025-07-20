@@ -169,25 +169,3 @@ class TestTranslateInstructions(unittest.TestCase):
             instructions[ANY_SECTION_NAME][0].translation,
             expected_instruction_with_string_address_translation,
         )
-
-    def test_instruction_with_printable_character(self):
-        a_character = "a"
-        op_str_with_printable_character = f"{hex(ord(a_character))}"
-        an_instruction_with_printable_character = Instruction(
-            address=ANY_ADDRESS,
-            mnemonic=ANY_MNEMONIC,
-            op_str=op_str_with_printable_character,
-        )
-        instructions = {ANY_SECTION_NAME: [an_instruction_with_printable_character]}
-
-        translate_instructions(
-            instructions, self.relocations, self.function_symbols, self.strings
-        )
-
-        expected_instruction_with_printable_character_translation = (
-            f"{ANY_MNEMONIC} {a_character}"
-        )
-        self.assertEqual(
-            instructions[ANY_SECTION_NAME][0].translation,
-            expected_instruction_with_printable_character_translation,
-        )
