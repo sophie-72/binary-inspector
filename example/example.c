@@ -76,6 +76,56 @@ int complex_logic(int x, int y) {
     return result;
 }
 
+// Recursive function: factorial
+int factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+// Function pointer test
+void call_func_ptr(int (*func)(int, int)) {
+    int res = func(2, 3);
+    printf("Func ptr result: %d\n", res);
+}
+
+// Struct and array test
+struct Point { int x, y; };
+void struct_test() {
+    struct Point p = {1, 2};
+    int arr[3] = {10, 20, 30};
+    printf("Point: %d %d, Array: %d %d %d\n", p.x, p.y, arr[0], arr[1], arr[2]);
+}
+
+// Local variable scope test
+void local_var_test() {
+    int a = 1;
+    if (a) {
+        int b = 2;
+        printf("Inner b: %d\n", b);
+    }
+    // Uncommenting the next line should cause a compile error (b is out of scope)
+    // printf("Outer b: %d\n", b);
+}
+
+// String and memory operation test
+void string_test() {
+    char buf[20];
+    strcpy(buf, "test");
+    printf("Buffer: %s\n", buf);
+}
+
+// Empty function
+void empty_function() {}
+
+// Return-only function
+int return_only() { return 42; }
+
+// Unreachable code
+void unreachable_code() {
+    return;
+    printf("This should not be printed!\n");
+}
+
 // Main function with various patterns
 int main(int argc, char* argv[]) {
     printf("Binary Inspector Test Program\n");
@@ -100,6 +150,28 @@ int main(int argc, char* argv[]) {
     // Test complex logic
     int result = complex_logic(15, 3);
     printf("Complex result: %d\n", result);
+    
+    // Recursion
+    int fact = factorial(5);
+    printf("Factorial(5): %d\n", fact);
+
+    // Function pointer
+    call_func_ptr(add_numbers);
+
+    // Struct/array
+    struct_test();
+
+    // Local variable scope
+    local_var_test();
+
+    // String/memory
+    string_test();
+
+    // Edge-case functions
+    empty_function();
+    int ret = return_only();
+    printf("Return-only: %d\n", ret);
+    unreachable_code();
     
     // Test with command line arguments
     if (argc > 1) {
