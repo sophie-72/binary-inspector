@@ -1,4 +1,3 @@
 pyelftools
 capstone
-streamlit
 graphviz

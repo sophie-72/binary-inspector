@@ -1,12 +1,14 @@
 """Write program output to a file."""
 
-import streamlit as st
+import os
+
 from graphviz import Digraph  # type: ignore
 
 from src.custom_types import (
     SectionNameToInstructionsMapping,
     FunctionNameToFunctionMapping,
 )
+from src.models import Function
 
 
 def write_to_file(
@@ -36,17 +38,21 @@ def write_to_file(
                     )
 
 
-def display_functions_control_flow_graph(
+def export_all_control_flow_graphs(
+    executable_name: str,
     functions: FunctionNameToFunctionMapping,
 ) -> None:
-    st.title("Binary Inspector: Control Flow Graph Visualizer")
+    output_directory = os.path.join("graphs", executable_name)
+    os.makedirs(output_directory, exist_ok=True)
 
-    function_names = list(functions.keys())
-    selected_function = st.selectbox("Select a function", function_names)
+    for function in functions.values():
+        _export_function_control_flow_graph(function, output_directory)
 
-    function = functions[selected_function]
 
-    dot = Digraph(comment=f"CFG for {selected_function}")
+def _export_function_control_flow_graph(
+    function: Function, output_directory: str
+) -> None:
+    dot = Digraph(comment=f"CFG for {function.name}")
 
     for i, block in enumerate(function.basic_blocks):
         instructions_rows = ""
@@ -63,19 +69,19 @@ def display_functions_control_flow_graph(
                 "</tr>"
             )
         label = f"""<
-                <table border="0" cellborder="1" cellspacing="0" cellpadding="4">
-                    <tr>
-                        <td colspan="4" bgcolor="lightgray"><b>Block {i}</b></td>
-                    </tr>
-                    <tr>
-                        <td><b>Address</b></td>
-                        <td><b>Mnemonic</b></td>
-                        <td><b>Operands</b></td>
-                        <td><b>Translation</b></td>
-                    </tr>
-                    {instructions_rows}
-                </table>
-            >"""
+                    <table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+                        <tr>
+                            <td colspan="4" bgcolor="lightgray"><b>Block {i}</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>Address</b></td>
+                            <td><b>Mnemonic</b></td>
+                            <td><b>Operands</b></td>
+                            <td><b>Translation</b></td>
+                        </tr>
+                        {instructions_rows}
+                    </table>
+                >"""
         dot.node(name=str(i), label=label, shape="none")
 
     for i, block in enumerate(function.basic_blocks):
@@ -83,4 +89,5 @@ def display_functions_control_flow_graph(
             j = function.basic_blocks.index(successor)
             dot.edge(str(i), str(j))
 
-    st.graphviz_chart(dot)
+    filename = f"{output_directory}/{function.name}"
+    dot.render(filename, cleanup=True, format="png")

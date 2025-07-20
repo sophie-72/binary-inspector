@@ -13,7 +13,7 @@ from src.custom_types import (
     SectionNameToInstructionsMapping,
 )
 from src.models import ELFProcessor, Address, Function
-from src.output import write_to_file, display_functions_control_flow_graph
+from src.output import write_to_file, export_all_control_flow_graphs
 from src.translation import translate_instructions
 
 
@@ -77,7 +77,7 @@ class Program:
 
     def display_analysis(self) -> None:
         """Display the analysis results."""
-        display_functions_control_flow_graph(self.functions)
+        export_all_control_flow_graphs(self.__executable_name, self.functions)
 
     def identify_functions(self) -> FunctionNameToFunctionMapping:
         """
