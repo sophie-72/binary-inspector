@@ -15,18 +15,24 @@ HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 def translate_instructions(
     instructions: SectionNameToInstructionsMapping,
     relocations: AddressToStringMapping,
+    function_symbols: AddressToStringMapping,
     strings: AddressToStringMapping,
 ) -> None:
     """
     Translate some instructions into a more readable format.
     :param instructions: A dictionary mapping section names to lists of instructions.
     :param relocations: A dictionary mapping relocation addresses to symbols.
+    :param function_symbols: A dictionary mapping function addresses to function names.
     :param strings: A dictionary mapping string addresses to strings.
     """
     for section_instructions in instructions.values():
         for instruction in section_instructions:
             _translate_instruction(
-                instruction, section_instructions, relocations, strings
+                instruction,
+                section_instructions,
+                relocations,
+                function_symbols,
+                strings,
             )
 
 
@@ -34,6 +40,7 @@ def _translate_instruction(
     instruction: Instruction,
     instructions: InstructionList,
     relocations: AddressToStringMapping,
+    function_symbols: AddressToStringMapping,
     strings: AddressToStringMapping,
 ) -> None:
     line_before_translation = instruction.mnemonic + " " + instruction.op_str
@@ -41,7 +48,8 @@ def _translate_instruction(
     line = _translate_pointer(line)
     line = _translate_rip(line, instructions, instruction)
     line = _evaluate_addition(line)
-    line = _translate_function_name(line, relocations)
+    line = _translate_relocation(line, relocations)
+    line = _translate_function_call(line, function_symbols)
     line = _translate_strings(line, strings)
     line = _translate_printable_character(line)
 
@@ -82,7 +90,7 @@ def _evaluate_addition(line):
     return line
 
 
-def _translate_function_name(line, relocations):
+def _translate_relocation(line, relocations):
     memory = re.search(f"memory\\[{HEX_ADDRESS_MATCH_PATTERN}+]", line)
     if memory:
         hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, memory.group())
@@ -92,6 +100,19 @@ def _translate_function_name(line, relocations):
 
             if function_name:
                 line = line.replace(memory.group(), function_name)
+
+    return line
+
+
+def _translate_function_call(line, function_symbols):
+    if "call" in line:
+        hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
+        if hex_address:
+            address = Address(int(hex_address.group(), 16))
+            function_name = function_symbols.get(address)
+
+            if function_name:
+                line = line.replace(hex_address.group(), function_name)
 
     return line
 

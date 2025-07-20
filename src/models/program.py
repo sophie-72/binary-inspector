@@ -68,7 +68,12 @@ class Program:
         Analyze the ELF file based on instructions, relocations, strings and
         function names extracted from the executable.
         """
-        translate_instructions(self.__instructions, self.__relocations, self.__strings)
+        translate_instructions(
+            self.__instructions,
+            self.__relocations,
+            self.__function_symbols,
+            self.__strings,
+        )
         write_to_file(self.__executable_name, self.__instructions)
         self.__functions = self.identify_functions()
 
