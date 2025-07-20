@@ -99,4 +99,4 @@ def _export_function_control_flow_graph(
     filename = f"{output_directory}/{function.name}"
     dot.render(filename, cleanup=True, format="png")
 
-    print(f"Control flow graph of the {function.name} function saved to {filename}")
+    print(f"Control flow graph of the {function.name} function saved to {filename}.png")
