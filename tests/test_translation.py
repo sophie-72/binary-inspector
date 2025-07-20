@@ -11,13 +11,17 @@ from tests.fixtures import (
 )
 
 ANY_SECTION_NAME = ".section"
+ANOTHER_FUNCTION_NAME = "another"
+CALL_MNEMONIC = "call"
 A_FUNCTION_ADDRESS = Address(0x10)
-A_STRING_ADDRESS = Address(0x20)
+ANOTHER_FUNCTION_ADDRESS = Address(0x20)
+A_STRING_ADDRESS = Address(0x30)
 
 
 class TestTranslateInstructions(unittest.TestCase):
     def setUp(self):
         self.relocations = {A_FUNCTION_ADDRESS: A_FUNCTION_NAME}
+        self.function_symbols = {ANOTHER_FUNCTION_ADDRESS: ANOTHER_FUNCTION_NAME}
         self.strings = {A_STRING_ADDRESS: A_STRING}
 
     def test_instruction_with_pointer(self):
@@ -34,7 +38,9 @@ class TestTranslateInstructions(unittest.TestCase):
                 )
                 instructions = {ANY_SECTION_NAME: [an_instruction_with_pointer]}
 
-                translate_instructions(instructions, self.relocations, self.strings)
+                translate_instructions(
+                    instructions, self.relocations, self.function_symbols, self.strings
+                )
 
                 expected_instruction_with_pointer_translation = (
                     f"{ANY_MNEMONIC} memory[{a_pointer_address}]"
@@ -59,7 +65,9 @@ class TestTranslateInstructions(unittest.TestCase):
             ANY_SECTION_NAME: [an_instruction_with_rip, another_instruction]
         }
 
-        translate_instructions(instructions, self.relocations, self.strings)
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
 
         expected_instruction_with_rip_translation = (
             f"{ANY_MNEMONIC} {another_instruction_address.to_hex_string()}"
@@ -84,7 +92,9 @@ class TestTranslateInstructions(unittest.TestCase):
         )
         instructions = {ANY_SECTION_NAME: [an_instruction_with_addition]}
 
-        translate_instructions(instructions, self.relocations, self.strings)
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
 
         expected_op_str = Address(
             ANY_ADDRESS.value + any_other_address.value
@@ -106,7 +116,9 @@ class TestTranslateInstructions(unittest.TestCase):
         )
         instructions = {ANY_SECTION_NAME: [an_instruction_with_function_address]}
 
-        translate_instructions(instructions, self.relocations, self.strings)
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
 
         expected_instruction_with_function_address_translation = (
             f"{ANY_MNEMONIC} {A_FUNCTION_NAME}"
@@ -114,6 +126,27 @@ class TestTranslateInstructions(unittest.TestCase):
         self.assertEqual(
             instructions[ANY_SECTION_NAME][0].translation,
             expected_instruction_with_function_address_translation,
+        )
+
+    def test_instruction_with_function_call(self):
+        op_str_with_function_address = ANOTHER_FUNCTION_ADDRESS.to_hex_string()
+        an_instruction_with_function_call = Instruction(
+            address=ANY_ADDRESS,
+            mnemonic=CALL_MNEMONIC,
+            op_str=op_str_with_function_address,
+        )
+        instructions = {ANY_SECTION_NAME: [an_instruction_with_function_call]}
+
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
+
+        expected_instruction_with_function_call_translation = (
+            f"{CALL_MNEMONIC} {ANOTHER_FUNCTION_NAME}"
+        )
+        self.assertEqual(
+            instructions[ANY_SECTION_NAME][0].translation,
+            expected_instruction_with_function_call_translation,
         )
 
     def test_instruction_with_string_address(self):
@@ -125,7 +158,9 @@ class TestTranslateInstructions(unittest.TestCase):
         )
         instructions = {ANY_SECTION_NAME: [an_instruction_with_string_address]}
 
-        translate_instructions(instructions, self.relocations, self.strings)
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
 
         expected_instruction_with_string_address_translation = (
             f'{ANY_MNEMONIC} "{A_STRING}"'
@@ -145,7 +180,9 @@ class TestTranslateInstructions(unittest.TestCase):
         )
         instructions = {ANY_SECTION_NAME: [an_instruction_with_printable_character]}
 
-        translate_instructions(instructions, self.relocations, self.strings)
+        translate_instructions(
+            instructions, self.relocations, self.function_symbols, self.strings
+        )
 
         expected_instruction_with_printable_character_translation = (
             f"{ANY_MNEMONIC} {a_character}"
