@@ -60,6 +60,7 @@ class Program:
 
     @property
     def functions(self) -> FunctionNameToFunctionMapping:
+        """Get the program's functions."""
         return self.__functions
 
     def analyze(self) -> None:
