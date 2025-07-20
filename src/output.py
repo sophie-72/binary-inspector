@@ -49,19 +49,34 @@ def display_functions_control_flow_graph(
     dot = Digraph(comment=f"CFG for {selected_function}")
 
     for i, block in enumerate(function.basic_blocks):
-        instructions = ""
+        instructions_rows = ""
         for instruction in block.instructions:
             translation = (
-                f"; {instruction.translation}" if instruction.translation else ""
+                f"{instruction.translation}" if instruction.translation else ""
             )
-            instructions += (
-                f"{instruction.address.to_hex_string()}:\t"
-                f"{instruction.mnemonic}\t"
-                f"{instruction.op_str}\t"
-                f"{translation}\n"
+            instructions_rows += (
+                "<tr>"
+                f"<td align='left'>{instruction.address.to_hex_string()}</td>"
+                f"<td align='left'>{instruction.mnemonic}</td>"
+                f"<td align='left'>{instruction.op_str}</td>"
+                f"<td align='left'>{translation}</td>"
+                "</tr>"
             )
-        label = f"Block {i}\\n{instructions}"
-        dot.node(str(i), label, shape="box", style="rounded")
+        label = f"""<
+                <table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+                    <tr>
+                        <td colspan="4" bgcolor="lightgray"><b>Block {i}</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Address</b></td>
+                        <td><b>Mnemonic</b></td>
+                        <td><b>Operands</b></td>
+                        <td><b>Translation</b></td>
+                    </tr>
+                    {instructions_rows}
+                </table>
+            >"""
+        dot.node(name=str(i), label=label, shape="none")
 
     for i, block in enumerate(function.basic_blocks):
         for successor in block.successors:
