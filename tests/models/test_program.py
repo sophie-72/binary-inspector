@@ -9,6 +9,12 @@ from tests.fixtures import (
 
 
 class TestIdentifyFunctions(unittest.TestCase):
+    def test_no_executable_name_no_file_content_when_creating_a_program_should_raise_runtime_error(
+        self,
+    ):
+        with self.assertRaises(RuntimeError):
+            Program()
+
     def test_identify_functions(self):
         any_section_name = ".text"
         another_function_name = "other"
