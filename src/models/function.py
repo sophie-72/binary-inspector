@@ -85,16 +85,16 @@ def _is_jump_target(instructions: List[Instruction], index: int):
     current_address = instructions[index].address
 
     for previous_instruction in instructions[:index]:
+        previous_instruction_hex_address = re.search(
+            HEX_ADDRESS_MATCH_PATTERN, previous_instruction.op_str
+        )
         if (
             previous_instruction.mnemonic.startswith("j")
-            and "0x" in previous_instruction.op_str
+            and previous_instruction_hex_address
         ):
-            try:
-                target = Address(int(previous_instruction.op_str.strip(), 16))
-                if target == current_address:
-                    return True
-            except ValueError:
-                pass
+            target = Address(int(previous_instruction_hex_address.group(), 16))
+            if target == current_address:
+                return True
 
     return False
 
