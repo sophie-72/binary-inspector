@@ -122,7 +122,7 @@ def _extract_jump_target(instruction: Instruction) -> Optional[int]:
     op_str = instruction.op_str.strip()
     hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, op_str)
 
-    if hex_address.group():
+    if hex_address:
         return int(hex_address.group(), 16)
 
     return None
