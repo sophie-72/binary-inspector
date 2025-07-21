@@ -2,14 +2,13 @@
 
 import re
 
+from src.constants import HEX_ADDRESS_MATCH_PATTERN
 from src.models import Instruction, Address
 from src.custom_types import (
     SectionNameToInstructionsMapping,
     InstructionList,
     AddressToStringMapping,
 )
-
-HEX_ADDRESS_MATCH_PATTERN = "0x[0-9a-f]+"
 
 
 def translate_instructions(

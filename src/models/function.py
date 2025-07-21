@@ -1,8 +1,9 @@
 """Represents a function."""
 
+import re
 from typing import List, Optional
 
-from src.constants import JUMP_MNEMONIC
+from src.constants import JUMP_MNEMONIC, HEX_ADDRESS_MATCH_PATTERN
 from src.models.address import Address
 from src.models.basic_block import BasicBlock
 from src.models.instruction import Instruction
@@ -119,13 +120,10 @@ def _add_jump_target(
 
 def _extract_jump_target(instruction: Instruction) -> Optional[int]:
     op_str = instruction.op_str.strip()
+    hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, op_str)
 
-    if "0x" in op_str:
-        try:
-            target = int(op_str, 16)
-            return target
-        except ValueError:
-            pass
+    if hex_address.group():
+        return int(hex_address.group(), 16)
 
     return None
 
