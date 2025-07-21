@@ -12,6 +12,15 @@ from tests.fixtures import (
 
 
 class TestFunction(unittest.TestCase):
+    def test_get_name(self):
+        function = Function(
+            name=A_FUNCTION_NAME,
+            start_address=ANY_ADDRESS,
+            instructions=AN_INSTRUCTION_LIST,
+        )
+
+        self.assertEqual(function.name, A_FUNCTION_NAME)
+
     def test_identify_basic_blocks(self):
         function = Function(
             name=A_FUNCTION_NAME,
