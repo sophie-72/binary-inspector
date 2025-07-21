@@ -79,9 +79,6 @@ class Function:
 
 
 def _is_jump_target(instructions: List[Instruction], index: int):
-    if index >= len(instructions):
-        return False
-
     current_address = instructions[index].address
 
     for previous_instruction in instructions[:index]:
