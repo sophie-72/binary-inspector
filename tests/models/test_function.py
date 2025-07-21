@@ -40,15 +40,17 @@ class TestFunction(unittest.TestCase):
             Instruction(
                 address=Address(0x1005), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
             ),
-            Instruction(address=Address(0x1006), mnemonic="je", op_str="0x1009"),
+            Instruction(address=Address(0x1006), mnemonic="je", op_str="0x1010"),
             Instruction(
                 address=Address(0x1007), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR
             ),
-            Instruction(
-                address=Address(0x1008), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
-            ),
+            Instruction(address=Address(0x1008), mnemonic="jmp", op_str="rax"),
             Instruction(
                 address=Address(0x1009), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
+            ),
+            Instruction(address=Address(0x1010), mnemonic="leave", op_str=ANY_OP_STR),
+            Instruction(
+                address=Address(0x1011), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
             ),
         ]
         function = Function(
@@ -60,7 +62,7 @@ class TestFunction(unittest.TestCase):
         function.identify_basic_blocks()
         function.identify_successors_and_predecessors()
 
-        self.assertEqual(len(function.basic_blocks), 7)
+        self.assertEqual(len(function.basic_blocks), 9)
         self.assertEqual(function.basic_blocks[0].start_address, Address(0x1000))
         self.assertEqual(function.basic_blocks[1].start_address, Address(0x1002))
         self.assertEqual(function.basic_blocks[2].start_address, Address(0x1004))
@@ -68,6 +70,8 @@ class TestFunction(unittest.TestCase):
         self.assertEqual(function.basic_blocks[4].start_address, Address(0x1006))
         self.assertEqual(function.basic_blocks[5].start_address, Address(0x1007))
         self.assertEqual(function.basic_blocks[6].start_address, Address(0x1009))
+        self.assertEqual(function.basic_blocks[7].start_address, Address(0x1010))
+        self.assertEqual(function.basic_blocks[8].start_address, Address(0x1011))
 
         self.assertFalse(function.basic_blocks[0].successors)
         self.assertFalse(function.basic_blocks[1].successors)
@@ -75,9 +79,11 @@ class TestFunction(unittest.TestCase):
         self.assertIn(function.basic_blocks[3], function.basic_blocks[2].successors)
         self.assertFalse(function.basic_blocks[3].successors)
         self.assertIn(function.basic_blocks[5], function.basic_blocks[4].successors)
-        self.assertIn(function.basic_blocks[6], function.basic_blocks[4].successors)
+        self.assertIn(function.basic_blocks[7], function.basic_blocks[4].successors)
         self.assertFalse(function.basic_blocks[5].successors)
         self.assertFalse(function.basic_blocks[6].successors)
+        self.assertIn(function.basic_blocks[8], function.basic_blocks[7].successors)
+        self.assertFalse(function.basic_blocks[8].successors)
 
         self.assertIn(function.basic_blocks[2], function.basic_blocks[0].predecessors)
         self.assertFalse(function.basic_blocks[1].predecessors)
@@ -85,4 +91,6 @@ class TestFunction(unittest.TestCase):
         self.assertIn(function.basic_blocks[2], function.basic_blocks[3].predecessors)
         self.assertFalse(function.basic_blocks[4].predecessors)
         self.assertIn(function.basic_blocks[4], function.basic_blocks[5].predecessors)
-        self.assertIn(function.basic_blocks[4], function.basic_blocks[6].predecessors)
+        self.assertFalse(function.basic_blocks[6].predecessors)
+        self.assertIn(function.basic_blocks[4], function.basic_blocks[7].predecessors)
+        self.assertIn(function.basic_blocks[7], function.basic_blocks[8].predecessors)
