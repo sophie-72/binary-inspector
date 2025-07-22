@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import mock_open, patch, MagicMock
 
-from src.models import Instruction
+from src.models import Instruction, BasicBlock
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
-from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME
+from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME, AN_INSTRUCTION_LIST
 
 
 class TestOutput(unittest.TestCase):
@@ -48,9 +48,15 @@ class TestOutput(unittest.TestCase):
     @patch("src.output.Digraph")
     @patch("os.makedirs")
     def test_export_all_control_flow_graphs(self, mock_makedirs, mock_digraph):
+        a_basic_block = BasicBlock(
+            start_address=ANY_ADDRESS, instructions=AN_INSTRUCTION_LIST
+        )
+        another_basic_block = BasicBlock(start_address=ANY_ADDRESS, instructions=[])
+        a_basic_block.add_successor(another_basic_block)
+
         a_function = MagicMock()
         a_function.name = A_FUNCTION_NAME
-        a_function.basic_blocks = []
+        a_function.basic_blocks = [a_basic_block, another_basic_block]
         functions = {A_FUNCTION_NAME: a_function}
         an_executable_name = "file"
 
