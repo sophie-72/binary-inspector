@@ -45,6 +45,7 @@ class Program:
                 self.__strings = elf_processor.get_file_strings()
                 self.__function_symbols = elf_processor.get_function_names()
         elif file_content:
+            self.__executable_name = ""
             self.__instructions = file_content.instructions or {}
             self.__relocations = file_content.relocations or {}
             self.__strings = file_content.strings or {}
