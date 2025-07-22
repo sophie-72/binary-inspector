@@ -31,6 +31,22 @@ class TestIdentifyFunctions(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             Program()
 
+    @patch("src.models.program.translate_instructions")
+    def test_when_analyzing_should_call_translate_instructions(
+        self, translate_instructions_mock
+    ):
+        self.program.analyze()
+
+        translate_instructions_mock.assert_called_once()
+
+    @patch("src.models.program.Program.identify_functions")
+    def test_when_analyzing_should_call_identify_functions(
+        self, identify_functions_mock
+    ):
+        self.program.analyze()
+
+        identify_functions_mock.assert_called_once()
+
     @patch("src.models.program.write_instructions_to_file")
     def test_when_exporting_analysis_should_call_write_instructions_to_file(
         self, write_instructions_to_file_mock
