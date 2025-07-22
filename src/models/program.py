@@ -58,8 +58,28 @@ class Program:
         self.__functions: FunctionNameToFunctionMapping = {}
 
     @property
+    def instructions(self) -> SectionNameToInstructionsMapping:
+        """Get the program instructions."""
+        return self.__instructions
+
+    @property
+    def relocations(self) -> AddressToStringMapping:
+        """Get the program relocations."""
+        return self.__relocations
+
+    @property
+    def strings(self) -> AddressToStringMapping:
+        """Get the program strings."""
+        return self.__strings
+
+    @property
+    def function_symbols(self) -> AddressToStringMapping:
+        """Get the program function symbols."""
+        return self.__function_symbols
+
+    @property
     def functions(self) -> FunctionNameToFunctionMapping:
-        """Get the program's functions."""
+        """Get the program functions."""
         return self.__functions
 
     def analyze(self) -> None:
