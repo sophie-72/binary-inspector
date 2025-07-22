@@ -1,14 +1,14 @@
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 
 from src.models import Instruction
-from src.output import write_instructions_to_file
-from tests.fixtures import ANY_ADDRESS
+from src.output import write_instructions_to_file, export_all_control_flow_graphs
+from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME
 
 
-class TestWriteToFile(unittest.TestCase):
+class TestOutput(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
-    def test_write_to_file(self, mock_file):
+    def test_write_instructions_to_file(self, mock_file):
         any_executable_name = "executable"
         an_instruction_without_a_translation = Instruction(
             address=ANY_ADDRESS, mnemonic="mov", op_str="eax, ebx"
@@ -44,3 +44,24 @@ class TestWriteToFile(unittest.TestCase):
             f"{an_instruction_with_a_translation.op_str}\t"
             f"; {an_instruction_with_a_translation.translation}\n"
         )
+
+    @patch("src.output.Digraph")
+    @patch("os.makedirs")
+    def test_export_all_control_flow_graphs(self, mock_makedirs, mock_digraph):
+        a_function = MagicMock()
+        a_function.name = A_FUNCTION_NAME
+        a_function.basic_blocks = []
+        functions = {A_FUNCTION_NAME: a_function}
+        an_executable_name = "file"
+
+        mock_dot = MagicMock()
+        mock_digraph.return_value = mock_dot
+
+        export_all_control_flow_graphs(an_executable_name, functions)
+
+        mock_makedirs.assert_called()
+        mock_digraph.assert_called()
+        mock_dot.render.assert_called()
+        args, _ = mock_dot.render.call_args
+
+        self.assertIn(f"output/{an_executable_name}/{A_FUNCTION_NAME}", args[0])
