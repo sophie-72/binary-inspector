@@ -41,4 +41,4 @@ class Function:
 
     def analyze(self):
         """Analyze the function."""
-        self.__basic_blocks = identify_basic_blocks(self.instructions)
+        self.__basic_blocks = identify_basic_blocks(self.__instructions)
