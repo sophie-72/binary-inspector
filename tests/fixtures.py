@@ -2,6 +2,7 @@ from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC
 from src.models import Address, Instruction
 
 ANY_ADDRESS = Address(0x4)
+ANY_OTHER_ADDRESS = Address(0x5)
 ANY_MNEMONIC = "mov"
 ANY_OP_STR = ""
 ANY_NUMBER = 1
