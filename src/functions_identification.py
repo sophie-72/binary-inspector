@@ -1,3 +1,5 @@
+"""Identify functions from instructions and function symbols."""
+
 from src.constants import RETURN_MNEMONIC
 from src.custom_types import (
     FunctionNameToFunctionMapping,
