@@ -1,34 +1,35 @@
 import unittest
 
 from src.models import Instruction
-from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR
+from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR, ANY_OBJECT
 
 
 class TestInstruction(unittest.TestCase):
-    def test_equal_same_value(self):
-        first_address = Instruction(
-            address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR
-        )
-        second_address = Instruction(
+    def setUp(self):
+        self.an_instruction = Instruction(
             address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR
         )
 
-        self.assertEqual(first_address, second_address)
-
-    def test_equal_different_value(self):
-        first_address = Instruction(
+    def test_equal_instructions_are_equal(self):
+        another_instruction = Instruction(
             address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR
         )
-        second_address = Instruction(
+
+        self.assertEqual(self.an_instruction, another_instruction)
+
+    def test_different_instructions_are_not_equal(self):
+        another_instruction = Instruction(
             address=ANY_ADDRESS, mnemonic="any", op_str=ANY_OP_STR
         )
 
-        self.assertNotEqual(first_address, second_address)
+        self.assertNotEqual(self.an_instruction, another_instruction)
 
-    def test_equal_different_objects(self):
-        first_address = Instruction(
-            address=ANY_ADDRESS, mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR
-        )
-        second_address = "not an address"
+    def test_different_objects_are_not_equal(self):
+        self.assertNotEqual(self.an_instruction, ANY_OBJECT)
 
-        self.assertNotEqual(first_address, second_address)
+    def test_setting_translation(self):
+        a_translation = "some string"
+
+        self.an_instruction.translation = a_translation
+
+        self.assertEqual(self.an_instruction.translation, a_translation)
