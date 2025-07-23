@@ -17,3 +17,4 @@ AN_INSTRUCTION_LIST = [
     Instruction(address=Address(0x1002), mnemonic=ANY_MNEMONIC, op_str=ANY_OP_STR),
     Instruction(address=Address(0x1003), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR),
 ]
+ANY_OBJECT = "an object"
