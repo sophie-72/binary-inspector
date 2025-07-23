@@ -1,3 +1,5 @@
+"""Identify the control flow graph from an instruction list."""
+
 import re
 from typing import List, Optional
 
@@ -9,7 +11,11 @@ from src.utils import is_block_terminator
 
 
 def identify_basic_blocks(instructions: List[Instruction]) -> List[BasicBlock]:
-    """Identify basic blocks in the function."""
+    """
+    Identify basic blocks in the instruction list.
+    :param instructions: The instruction list.
+    :return: The list of basic blocks identified from the instruction list.
+    """
     blocks = []
     current_block_instructions: List[Instruction] = []
 
@@ -32,7 +38,10 @@ def identify_basic_blocks(instructions: List[Instruction]) -> List[BasicBlock]:
 
 
 def identify_successors_and_predecessors(basic_blocks: List[BasicBlock]) -> None:
-    """Identify successors and predecessors of each basic block in the function."""
+    """
+    Identify successors and predecessors of the basic blocks.
+    :param basic_blocks: The list of basic blocks identified from the instruction list.
+    """
     for i, block in enumerate(basic_blocks):
         last_instruction = block.instructions[-1]
 
