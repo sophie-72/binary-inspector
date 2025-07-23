@@ -8,7 +8,7 @@ from src.custom_types import (
     SectionNameToInstructionsMapping,
     FunctionNameToFunctionMapping,
 )
-from src.models import Function
+from src.models.function import Function
 
 
 def write_instructions_to_file(
