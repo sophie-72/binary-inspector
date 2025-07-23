@@ -3,6 +3,11 @@
 A disassembler and control flow analyzer for ELF binaries written in Python.
 It extracts assembly instructions, strings, and function names; identifies functions and basic blocks; and builds control flow graphs to provide insight into the structure of compiled programs.
 
+## Motivation
+
+I created **Binary Inspector** to deepen my understanding of how disassemblers and control flow analysis tools work under the hood.
+This project was an educational exercise in binary analysis, ELF parsing, and control flow graph construction.
+
 ## Installation
 
 1. Clone the repository:
@@ -31,8 +36,9 @@ python -m src.main <executable>
 An example is provided in the `example` directory.
 The `example.c` file contains the source code, and `example` is the compiled program.
 You can compile the example yourself or use the provided binary directly.
+If you just want to see the analysis results, these are available in the `output/example` directory.
 
-To compile the test program, use:
+To compile the example program, use:
 
 ```bash
 gcc -o example/example example/example.c
