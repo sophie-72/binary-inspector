@@ -1,6 +1,7 @@
 # Binary Inspector
 
-A Python tool for analyzing ELF binaries.
+A disassembler and control flow analyzer for ELF binaries written in Python.
+It extracts assembly instructions, strings, and function names; identifies functions and basic blocks; and builds control flow graphs to provide insight into the structure of compiled programs.
 
 ## Installation
 
