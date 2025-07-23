@@ -29,12 +29,8 @@ class TestFunction(unittest.TestCase):
     def test_get_basic_blocks(self):
         self.assertEqual(self.a_function.basic_blocks, [])
 
-    @patch("src.models.function.identify_successors_and_predecessors")
     @patch("src.models.function.identify_basic_blocks")
-    def test_analyze(
-        self, identify_basic_blocks_mock, identify_successors_and_predecessors_mock
-    ):
+    def test_analyze(self, identify_basic_blocks_mock):
         self.a_function.analyze()
 
         identify_basic_blocks_mock.assert_called_once()
-        identify_successors_and_predecessors_mock.assert_called_once()

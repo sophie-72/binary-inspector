@@ -1,10 +1,7 @@
 import unittest
 
 from src.constants import RETURN_MNEMONIC
-from src.control_flow_graph import (
-    identify_basic_blocks,
-    identify_successors_and_predecessors,
-)
+from src.control_flow_graph import identify_basic_blocks
 from src.models import Address, Instruction
 from tests.fixtures import (
     AN_INSTRUCTION_LIST,
@@ -15,13 +12,6 @@ from tests.fixtures import (
 
 class TestControlFlowGraph(unittest.TestCase):
     def test_identify_basic_blocks(self):
-        result = identify_basic_blocks(AN_INSTRUCTION_LIST)
-
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0].start_address, Address(0x1000))
-        self.assertEqual(result[1].start_address, Address(0x1002))
-
-    def test_identify_successors_and_predecessors(self):
         an_instruction_list_with_multiple_blocks = AN_INSTRUCTION_LIST + [
             Instruction(address=Address(0x1004), mnemonic="je", op_str="0x1000"),
             Instruction(
@@ -42,7 +32,6 @@ class TestControlFlowGraph(unittest.TestCase):
         ]
 
         basic_blocks = identify_basic_blocks(an_instruction_list_with_multiple_blocks)
-        identify_successors_and_predecessors(basic_blocks)
 
         self.assertEqual(len(basic_blocks), 9)
         self.assertEqual(basic_blocks[0].start_address, Address(0x1000))
