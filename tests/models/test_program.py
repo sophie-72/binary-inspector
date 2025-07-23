@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import patch, MagicMock, mock_open
 
 from src.models import Address
-from src.models.function import Function
 from src.models.program import Program, FileContent
 from tests.fixtures import (
     A_FUNCTION_NAME,
@@ -72,7 +71,7 @@ class TestProgram(unittest.TestCase):
 
         translate_instructions_mock.assert_called_once()
 
-    @patch("src.models.program.Program.identify_functions")
+    @patch("src.models.program.identify_functions")
     def test_when_analyzing_should_call_identify_functions(
         self, identify_functions_mock
     ):
@@ -89,45 +88,3 @@ class TestProgram(unittest.TestCase):
 
         write_instructions_to_file_mock.assert_called_once()
         export_all_control_flow_graphs_mock.assert_called_once()
-
-    def test_identify_functions(self):
-        expected_first_function_instructions = [
-            AN_INSTRUCTION_LIST[0],
-            AN_INSTRUCTION_LIST[1],
-        ]
-        expected_first_function = Function(
-            name=A_FUNCTION_NAME,
-            start_address=Address(0x1000),
-            instructions=expected_first_function_instructions,
-        )
-        expected_second_function_instructions = [
-            AN_INSTRUCTION_LIST[2],
-            AN_INSTRUCTION_LIST[3],
-        ]
-        expected_second_function = Function(
-            name=ANOTHER_FUNCTION_NAME,
-            start_address=Address(0x1002),
-            instructions=expected_second_function_instructions,
-        )
-
-        result = self.program.identify_functions()
-
-        self.assertEqual(len(result), 2)
-        self.assertIn(A_FUNCTION_NAME, result.keys())
-        self.assertIn(ANOTHER_FUNCTION_NAME, result.keys())
-
-        result_first_function = result[A_FUNCTION_NAME]
-        result_second_function = result[ANOTHER_FUNCTION_NAME]
-
-        self.assertEqual(
-            result_first_function.start_address, expected_first_function.start_address
-        )
-        self.assertEqual(
-            result_second_function.start_address, expected_second_function.start_address
-        )
-        self.assertEqual(
-            result_first_function.instructions, expected_first_function.instructions
-        )
-        self.assertEqual(
-            result_second_function.instructions, expected_second_function.instructions
-        )
