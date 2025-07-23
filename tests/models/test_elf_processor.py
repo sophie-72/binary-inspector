@@ -75,7 +75,7 @@ class TestElfProcessor(unittest.TestCase):
         result = self.elf_processor.get_file_strings()
         self.assertEqual(result, expected_strings)
 
-    def test_get_function_symbols(self):
+    def test_get_function_names(self):
         mock_symbol = MagicMock()
         mock_symbol.__getitem__.side_effect = lambda key: {
             "st_info": {"type": "STT_FUNC"},
