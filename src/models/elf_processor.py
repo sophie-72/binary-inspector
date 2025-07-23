@@ -1,11 +1,11 @@
 """Fetch data from the ELF file using the elftools library."""
 
 import re
+from typing import Dict, List
 
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from src.custom_types import SectionNameToInstructionsMapping, AddressToStringMapping
 from src.models.address import Address
 from src.models.instruction import Instruction
 
@@ -16,7 +16,7 @@ class ELFProcessor:
     def __init__(self, elffile: ELFFile):
         self.elffile = elffile
 
-    def get_file_instructions(self) -> SectionNameToInstructionsMapping:
+    def get_file_instructions(self) -> Dict[str, List[Instruction]]:
         """
         Extract assembly instructions from an ELF file.
         :return: A dictionary mapping section names to lists of instructions.
@@ -42,7 +42,7 @@ class ELFProcessor:
 
         return instructions
 
-    def get_file_relocations(self) -> AddressToStringMapping:
+    def get_file_relocations(self) -> Dict[Address, str]:
         """
         Extract relocations from an ELF file.
         :return: A dictionary mapping relocation addresses to symbols.
@@ -61,7 +61,7 @@ class ELFProcessor:
 
         return relocations
 
-    def get_file_strings(self) -> AddressToStringMapping:
+    def get_file_strings(self) -> Dict[Address, str]:
         """
         Extract strings from an ELF file.
         :return: A dictionary mapping string addresses to strings.
@@ -84,7 +84,7 @@ class ELFProcessor:
 
         return rodata_strings
 
-    def get_function_names(self) -> AddressToStringMapping:
+    def get_function_names(self) -> Dict[Address, str]:
         """
         Extract function names from an ELF file.
         :return: A dictionary mapping function addresses to function names.

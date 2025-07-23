@@ -12,7 +12,8 @@ from src.custom_types import (
     AddressToStringMapping,
     SectionNameToInstructionsMapping,
 )
-from src.models import ELFProcessor, Address, Function
+from src.models import ELFProcessor, Address
+from src.models.function import Function
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
 from src.translation import translate_instructions
 
@@ -131,8 +132,7 @@ class Program:
                     current_function = Function(
                         function_name, function_address, function_instructions
                     )
-                    current_function.identify_basic_blocks()
-                    current_function.identify_successors_and_predecessors()
+                    current_function.analyze()
 
                     functions[function_name] = current_function
 

@@ -1,13 +1,14 @@
 """Represents a function."""
 
-import re
-from typing import List, Optional
+from typing import List
 
-from src.constants import JUMP_MNEMONIC, HEX_ADDRESS_MATCH_PATTERN
+from src.control_flow_graph import (
+    identify_basic_blocks,
+    identify_successors_and_predecessors,
+)
 from src.models.address import Address
 from src.models.basic_block import BasicBlock
 from src.models.instruction import Instruction
-from src.utils import is_block_terminator
 
 
 class Function:
@@ -41,95 +42,7 @@ class Function:
         """Get the basic blocks of the function."""
         return self.__basic_blocks
 
-    def identify_basic_blocks(self) -> None:
-        """Identify basic blocks in the function."""
-        blocks = []
-        current_block_instructions: List[Instruction] = []
-
-        def append_block(instructions: List[Instruction]) -> None:
-            if instructions:
-                block = BasicBlock(current_block_instructions[0].address, instructions)
-                blocks.append(block)
-
-        for i, instruction in enumerate(self.instructions):
-            current_block_instructions.append(instruction)
-
-            if is_block_terminator(instruction) or _is_jump_target(
-                self.instructions, i
-            ):
-                append_block(current_block_instructions)
-                current_block_instructions = []
-
-        append_block(current_block_instructions)
-        self.__basic_blocks = blocks
-
-    def identify_successors_and_predecessors(self) -> None:
-        """Identify successors and predecessors of each basic block in the function."""
-        for i, block in enumerate(self.basic_blocks):
-            last_instruction = block.instructions[-1]
-
-            if (
-                last_instruction.mnemonic.startswith("j")
-                and last_instruction.mnemonic != JUMP_MNEMONIC
-            ) or not is_block_terminator(last_instruction):
-                _add_next_block(self.basic_blocks, block, i)
-
-            if last_instruction.mnemonic.startswith("j"):
-                _add_jump_target(self.basic_blocks, block, last_instruction)
-
-
-def _is_jump_target(instructions: List[Instruction], index: int):
-    current_address = instructions[index].address
-
-    for previous_instruction in instructions[:index]:
-        previous_instruction_hex_address = re.search(
-            HEX_ADDRESS_MATCH_PATTERN, previous_instruction.op_str
-        )
-        if (
-            previous_instruction.mnemonic.startswith("j")
-            and previous_instruction_hex_address
-        ):
-            target = Address(int(previous_instruction_hex_address.group(), 16))
-            if target == current_address:
-                return True
-
-    return False
-
-
-def _add_next_block(
-    basic_blocks: List[BasicBlock], block: BasicBlock, index: int
-) -> None:
-    if index + 1 < len(basic_blocks):
-        block.add_successor(basic_blocks[index + 1])
-        basic_blocks[index + 1].add_predecessor(block)
-
-
-def _add_jump_target(
-    basic_blocks: List[BasicBlock], block: BasicBlock, instruction: Instruction
-) -> None:
-    target_address = _extract_jump_target(instruction)
-    if target_address:
-        target_block = _find_block_by_address(basic_blocks, target_address)
-        if target_block:
-            block.add_successor(target_block)
-            target_block.add_predecessor(block)
-
-
-def _extract_jump_target(instruction: Instruction) -> Optional[int]:
-    op_str = instruction.op_str.strip()
-    hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, op_str)
-
-    if hex_address:
-        return int(hex_address.group(), 16)
-
-    return None
-
-
-def _find_block_by_address(
-    blocks: List[BasicBlock], target_address: int
-) -> Optional[BasicBlock]:
-    for block in blocks:
-        if block.start_address.value <= target_address <= block.end_address.value:
-            return block
-
-    return None
+    def analyze(self):
+        """Analyze the function."""
+        self.__basic_blocks = identify_basic_blocks(self.instructions)
+        identify_successors_and_predecessors(self.basic_blocks)
