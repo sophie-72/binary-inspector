@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 
 from src.models import Address, Function
 from src.models.program import Program, FileContent
@@ -35,9 +35,9 @@ class TestProgram(unittest.TestCase):
 
     @patch("src.models.program.ELFProcessor")
     @patch("src.models.program.ELFFile")
-    @patch("builtins.open", new_callable=unittest.mock.mock_open, read_data=b"ELF")
+    @patch("builtins.open", new_callable=mock_open, read_data=b"ELF")
     def test_init_with_executable_name(
-        self, mock_open, mock_elf_file, mock_elf_processor
+        self, mock_file, mock_elf_file, mock_elf_processor
     ):
         a_file_name = "file"
         some_instructions = {"section": []}
@@ -54,7 +54,7 @@ class TestProgram(unittest.TestCase):
 
         program = Program(executable_name=a_file_name)
 
-        mock_open.assert_called_once_with(a_file_name, "rb")
+        mock_file.assert_called_once_with(a_file_name, "rb")
         mock_elf_file.assert_called_once()
         mock_elf_processor.assert_called_once_with(mock_elf_file.return_value)
 
@@ -79,20 +79,14 @@ class TestProgram(unittest.TestCase):
 
         identify_functions_mock.assert_called_once()
 
+    @patch("src.models.program.export_all_control_flow_graphs")
     @patch("src.models.program.write_instructions_to_file")
-    def test_when_exporting_analysis_should_call_write_instructions_to_file(
-        self, write_instructions_to_file_mock
+    def test_when_exporting_analysis_should_call_write_instructions_to_file_and_export_all_control_flow_graphs(
+        self, write_instructions_to_file_mock, export_all_control_flow_graphs_mock
     ):
         self.program.export_analysis()
 
         write_instructions_to_file_mock.assert_called_once()
-
-    @patch("src.models.program.export_all_control_flow_graphs")
-    def test_when_exporting_analysis_should_call_export_all_control_flow_graphs(
-        self, export_all_control_flow_graphs_mock
-    ):
-        self.program.export_analysis()
-
         export_all_control_flow_graphs_mock.assert_called_once()
 
     def test_identify_functions(self):
