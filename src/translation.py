@@ -93,7 +93,7 @@ def _translate_relocation(line, relocations):
     if memory:
         hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, memory.group())
         if hex_address:
-            address = Address(int(hex_address.group(), 16))
+            address = Address.from_hex_string(hex_address.group())
             function_name = relocations.get(address)
 
             if function_name:
@@ -106,7 +106,7 @@ def _translate_function_call(line, function_symbols):
     if "call" in line:
         hex_address = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
         if hex_address:
-            address = Address(int(hex_address.group(), 16))
+            address = Address.from_hex_string(hex_address.group())
             function_name = function_symbols.get(address)
 
             if function_name:
@@ -118,7 +118,7 @@ def _translate_function_call(line, function_symbols):
 def _translate_strings(line, strings):
     address_string = re.search(HEX_ADDRESS_MATCH_PATTERN, line)
     if address_string:
-        address = Address(int(address_string.group(), 16))
+        address = Address.from_hex_string(address_string.group())
         string = strings.get(address)
 
         if string:

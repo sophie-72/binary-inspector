@@ -68,7 +68,7 @@ def _is_jump_target(instructions: List[Instruction], index: int):
             previous_instruction.mnemonic.startswith("j")
             and previous_instruction_hex_address
         ):
-            target = Address(int(previous_instruction_hex_address.group(), 16))
+            target = Address.from_hex_string(previous_instruction_hex_address.group())
             if target == current_address:
                 return True
 

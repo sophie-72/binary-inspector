@@ -10,6 +10,13 @@ class TestAddress(unittest.TestCase):
     def setUp(self):
         self.an_address = Address(ANY_VALUE)
 
+    def test_creating_an_address_from_hex_string(self):
+        an_address_hex_string = hex(ANY_VALUE)
+
+        result = Address.from_hex_string(an_address_hex_string)
+
+        self.assertEqual(result.value, ANY_VALUE)
+
     def test_equal_addresses_are_equal(self):
         another_address = Address(ANY_VALUE)
 
