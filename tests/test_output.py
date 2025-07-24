@@ -7,8 +7,9 @@ from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME, AN_INSTRUCTION_LIST
 
 
 class TestOutput(unittest.TestCase):
+    @patch("os.makedirs")
     @patch("builtins.open", new_callable=mock_open)
-    def test_write_instructions_to_file(self, mock_file):
+    def test_write_instructions_to_file(self, mock_file, mock_makedirs):
         any_executable_name = "executable"
         an_instruction_without_a_translation = Instruction(
             address=ANY_ADDRESS, mnemonic="mov", op_str="eax, ebx"
