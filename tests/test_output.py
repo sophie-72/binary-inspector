@@ -29,6 +29,7 @@ class TestOutput(unittest.TestCase):
 
         write_instructions_to_file(any_executable_name, instructions)
 
+        mock_makedirs.assert_called()
         mock_file.assert_called_once_with(
             f"output/{any_executable_name}.asm", "w", encoding="utf-8"
         )
