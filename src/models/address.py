@@ -7,10 +7,6 @@ class Address:
     def __init__(self, value: int) -> None:
         self.__value = value
 
-    @classmethod
-    def from_hex_string(cls, hex_string: str) -> "Address":
-        return Address(int(hex_string, 16))
-
     def __eq__(self, other) -> bool:
         if not isinstance(other, Address):
             return False
@@ -19,6 +15,11 @@ class Address:
 
     def __hash__(self) -> int:
         return hash(self.__value)
+
+    @classmethod
+    def from_hex_string(cls, hex_string: str) -> "Address":
+        """Creates an address from a hexadecimal string."""
+        return Address(int(hex_string, 16))
 
     @property
     def value(self) -> int:
