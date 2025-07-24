@@ -7,7 +7,8 @@ import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
 from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
-from src.models import Address, Instruction
+from src.models.address import Address
+from src.models.instruction import Instruction
 
 
 class ELFProcessor:
