@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
+from src.constants import SECTION_HEADER_ADDRESS
 from src.models.elf_processor import ELFProcessor
 from src.models import Instruction, Address
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
@@ -27,7 +28,7 @@ class TestElfProcessor(unittest.TestCase):
         mock_section.name = a_section_name
         mock_section.__getitem__.side_effect = lambda key: {
             "sh_type": "SHT_PROGBITS",
-            "sh_addr": ANY_ADDRESS.value,
+            SECTION_HEADER_ADDRESS: ANY_ADDRESS.value,
         }[key]
         mock_section.data.return_value = some_opcodes
         self.mock_elf_file.iter_sections.return_value = [mock_section]
@@ -64,7 +65,7 @@ class TestElfProcessor(unittest.TestCase):
         mock_rodata_section = MagicMock()
         mock_rodata_section.data.return_value = A_STRING.encode("utf-8")
         mock_rodata_section.__getitem__.side_effect = lambda key: {
-            "sh_addr": ANY_ADDRESS.value,
+            SECTION_HEADER_ADDRESS: ANY_ADDRESS.value,
         }[key]
         self.mock_elf_file.get_section_by_name.return_value = mock_rodata_section
 

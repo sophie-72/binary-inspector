@@ -6,6 +6,7 @@ from typing import Dict, List
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
+from src.constants import SECTION_HEADER_ADDRESS
 from src.models.address import Address
 from src.models.instruction import Instruction
 
@@ -29,7 +30,7 @@ class ELFProcessor:
                 "SHT_NOBITS",
             ):
                 opcodes = section.data()
-                addr = section["sh_addr"]
+                addr = section[SECTION_HEADER_ADDRESS]
 
                 md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
 
@@ -71,7 +72,7 @@ class ELFProcessor:
         rodata_section = self.elffile.get_section_by_name(".rodata")
         if rodata_section:
             rodata_data = rodata_section.data()
-            rodata_address = rodata_section["sh_addr"]
+            rodata_address = rodata_section[SECTION_HEADER_ADDRESS]
 
             # Extract strings from the .rodata section
             strings = re.findall(
