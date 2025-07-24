@@ -4,7 +4,9 @@ import re
 from typing import List, Optional
 
 from src.constants import JUMP_MNEMONIC, HEX_ADDRESS_MATCH_PATTERN
-from src.models import Address, BasicBlock, Instruction
+from src.models.address import Address
+from src.models.basic_block import BasicBlock
+from src.models.instruction import Instruction
 from src.utils import is_block_terminator
 
 

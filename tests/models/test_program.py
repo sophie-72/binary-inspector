@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock, mock_open
 
-from src.models import Address, Program, FileContent
+from src.models import Address
+from src.models.program import Program, FileContent
 from tests.fixtures import (
     A_FUNCTION_NAME,
     AN_INSTRUCTION_LIST,
