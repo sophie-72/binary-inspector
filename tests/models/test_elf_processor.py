@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE
+from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
 from src.models.elf_processor import ELFProcessor
 from src.models import Instruction, Address
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
@@ -63,7 +63,7 @@ class TestElfProcessor(unittest.TestCase):
 
     def test_get_file_strings(self):
         mock_rodata_section = MagicMock()
-        mock_rodata_section.data.return_value = A_STRING.encode("utf-8")
+        mock_rodata_section.data.return_value = A_STRING.encode(ENCODING)
         mock_rodata_section.__getitem__.side_effect = lambda key: {
             SECTION_HEADER_ADDRESS: ANY_ADDRESS.value,
         }[key]

@@ -6,7 +6,7 @@ from typing import Dict, List
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE
+from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
 from src.models.address import Address
 from src.models.instruction import Instruction
 
@@ -81,7 +81,7 @@ class ELFProcessor:
             for s in strings:
                 start_index = rodata_data.index(s)
                 string_address = Address(rodata_address + start_index)
-                rodata_strings[string_address] = s.decode("utf-8")
+                rodata_strings[string_address] = s.decode(ENCODING)
 
         return rodata_strings
 

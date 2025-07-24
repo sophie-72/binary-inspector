@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import mock_open, patch, MagicMock
 
+from src.constants import ENCODING
 from src.models import Instruction, BasicBlock
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
 from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME, AN_INSTRUCTION_LIST
@@ -31,7 +32,7 @@ class TestOutput(unittest.TestCase):
 
         mock_makedirs.assert_called()
         mock_file.assert_called_once_with(
-            f"output/{any_executable_name}.asm", "w", encoding="utf-8"
+            f"output/{any_executable_name}.asm", "w", encoding=ENCODING
         )
 
         handle = mock_file()
