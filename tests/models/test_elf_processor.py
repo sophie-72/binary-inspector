@@ -1,10 +1,20 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
-from src.models.elf_processor import ELFProcessor
+from src.constants import (
+    SECTION_HEADER_ADDRESS,
+    SECTION_HEADER_TYPE,
+    ENCODING,
+)
 from src.models import Instruction, Address
-from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
+from src.models.elf_processor import ELFProcessor
+from tests.fixtures import (
+    ANY_ADDRESS,
+    ANY_NUMBER,
+    A_FUNCTION_NAME,
+    A_STRING,
+    A_SECTION_NAME,
+)
 
 
 class TestElfProcessor(unittest.TestCase):
@@ -13,7 +23,6 @@ class TestElfProcessor(unittest.TestCase):
         self.elf_processor = ELFProcessor(self.mock_elf_file)
 
     def test_get_file_instructions(self):
-        a_section_name = ".text"
         some_opcodes = b"\x55\x48\x89\xe5"
         instructions_matching_opcodes = [
             Instruction(address=ANY_ADDRESS, mnemonic="push", op_str="rbp"),
@@ -25,7 +34,7 @@ class TestElfProcessor(unittest.TestCase):
         ]
 
         mock_section = MagicMock()
-        mock_section.name = a_section_name
+        mock_section.name = A_SECTION_NAME
         mock_section.__getitem__.side_effect = lambda key: {
             SECTION_HEADER_TYPE: "SHT_PROGBITS",
             SECTION_HEADER_ADDRESS: ANY_ADDRESS.value,
@@ -33,7 +42,7 @@ class TestElfProcessor(unittest.TestCase):
         mock_section.data.return_value = some_opcodes
         self.mock_elf_file.iter_sections.return_value = [mock_section]
 
-        expected_instructions = {a_section_name: instructions_matching_opcodes}
+        expected_instructions = {A_SECTION_NAME: instructions_matching_opcodes}
 
         result = self.elf_processor.get_file_instructions()
         self.assertEqual(result, expected_instructions)

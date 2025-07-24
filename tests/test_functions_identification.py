@@ -6,6 +6,7 @@ from src.models.function import Function
 from tests.fixtures import (
     A_FUNCTION_NAME,
     AN_INSTRUCTION_LIST,
+    A_SECTION_NAME,
 )
 
 ANOTHER_FUNCTION_NAME = "other"
@@ -13,14 +14,13 @@ ANOTHER_FUNCTION_NAME = "other"
 
 class TestFunctionsIdentification(unittest.TestCase):
     def test_identify_functions(self):
-        any_section_name = ".text"
         function_symbols = {
             Address(0x1002): ANOTHER_FUNCTION_NAME,
             Address(0x1000): A_FUNCTION_NAME,
         }
 
         result = identify_functions(
-            instructions={any_section_name: AN_INSTRUCTION_LIST},
+            instructions={A_SECTION_NAME: AN_INSTRUCTION_LIST},
             function_symbols=function_symbols,
         )
 

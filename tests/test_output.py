@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import mock_open, patch, MagicMock
 
-from src.constants import ENCODING
+from src.constants import ENCODING, TEXT_SECTION_NAME
 from src.models import Instruction, BasicBlock
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
 from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME, AN_INSTRUCTION_LIST
@@ -21,7 +21,7 @@ class TestOutput(unittest.TestCase):
         an_instruction_with_a_translation.translation = "Add 1 to EAX"
 
         instructions = {
-            ".text": [
+            TEXT_SECTION_NAME: [
                 an_instruction_without_a_translation,
                 an_instruction_with_a_translation,
             ],

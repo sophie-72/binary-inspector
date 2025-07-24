@@ -4,7 +4,7 @@ import os
 
 from graphviz import Digraph  # type: ignore
 
-from src.constants import ENCODING
+from src.constants import ENCODING, TEXT_SECTION_NAME
 from src.custom_types import (
     SectionNameToInstructionsMapping,
     FunctionNameToFunctionMapping,
@@ -26,7 +26,7 @@ def write_instructions_to_file(
 
     with open(filename, "w", encoding=ENCODING) as file:
         for section_name, section_instructions in instructions.items():
-            if section_name == ".text":
+            if section_name == TEXT_SECTION_NAME:
                 for instruction in section_instructions:
                     translation = (
                         f"; {instruction.translation}"

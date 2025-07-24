@@ -8,6 +8,7 @@ from tests.fixtures import (
     AN_INSTRUCTION_LIST,
     ANY_ADDRESS,
     A_STRING,
+    A_SECTION_NAME,
 )
 
 ANOTHER_FUNCTION_NAME = "other"
@@ -15,14 +16,13 @@ ANOTHER_FUNCTION_NAME = "other"
 
 class TestProgram(unittest.TestCase):
     def setUp(self):
-        any_section_name = ".text"
         function_symbols = {
             Address(0x1002): ANOTHER_FUNCTION_NAME,
             Address(0x1000): A_FUNCTION_NAME,
         }
 
         file_content = FileContent(
-            instructions={any_section_name: AN_INSTRUCTION_LIST},
+            instructions={A_SECTION_NAME: AN_INSTRUCTION_LIST},
             function_symbols=function_symbols,
         )
         self.program = Program(file_content=file_content)

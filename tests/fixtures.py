@@ -1,4 +1,4 @@
-from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC
+from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC, TEXT_SECTION_NAME
 from src.models import Address, Instruction
 
 ANY_ADDRESS = Address(0x4)
@@ -19,3 +19,4 @@ AN_INSTRUCTION_LIST = [
     Instruction(address=Address(0x1003), mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR),
 ]
 ANY_OBJECT = "an object"
+A_SECTION_NAME = TEXT_SECTION_NAME
