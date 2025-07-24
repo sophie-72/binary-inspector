@@ -7,6 +7,7 @@ import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
 from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
+from src.custom_types import AddressToStringMapping
 from src.models.address import Address
 from src.models.instruction import Instruction
 
@@ -43,7 +44,7 @@ class ELFProcessor:
 
         return instructions
 
-    def get_file_relocations(self) -> Dict[Address, str]:
+    def get_file_relocations(self) -> AddressToStringMapping:
         """
         Extract relocations from an ELF file.
         :return: A dictionary mapping relocation addresses to symbols.
@@ -62,7 +63,7 @@ class ELFProcessor:
 
         return relocations
 
-    def get_file_strings(self) -> Dict[Address, str]:
+    def get_file_strings(self) -> AddressToStringMapping:
         """
         Extract strings from an ELF file.
         :return: A dictionary mapping string addresses to strings.
@@ -85,7 +86,7 @@ class ELFProcessor:
 
         return rodata_strings
 
-    def get_function_names(self) -> Dict[Address, str]:
+    def get_function_names(self) -> AddressToStringMapping:
         """
         Extract function names from an ELF file.
         :return: A dictionary mapping function addresses to function names.
