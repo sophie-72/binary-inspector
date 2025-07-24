@@ -1,4 +1,4 @@
-"""Represents a basic block."""
+"""Represent a basic block."""
 
 from typing import List
 
@@ -8,7 +8,7 @@ from src.models.instruction import Instruction
 
 
 class BasicBlock:
-    """Represents a basic block."""
+    """Represent a basic block."""
 
     def __init__(self, start_address: Address, instructions: List[Instruction]) -> None:
         self.__start_address = start_address

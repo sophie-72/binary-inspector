@@ -1,4 +1,4 @@
-"""Translate assembly instructions into a more readable format."""
+"""Translate some assembly instructions into a more readable format."""
 
 import re
 

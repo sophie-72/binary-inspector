@@ -1,4 +1,4 @@
-"""Write program output to a file."""
+"""Write assembly instructions to a file and export all control flow graphs."""
 
 import os
 

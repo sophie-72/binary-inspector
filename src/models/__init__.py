@@ -1,4 +1,4 @@
-"""Imports every model."""
+"""Import every model."""
 
 from src.models.address import Address
 from src.models.instruction import Instruction

@@ -1,4 +1,4 @@
-"""Represents a function."""
+"""Represent a function."""
 
 from typing import List
 
@@ -9,7 +9,7 @@ from src.models.instruction import Instruction
 
 
 class Function:
-    """Represents a function."""
+    """Represent a function."""
 
     def __init__(
         self, name: str, start_address: Address, instructions: List[Instruction]

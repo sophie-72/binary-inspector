@@ -1,4 +1,4 @@
-"""Analyzes the provided file."""
+"""Analyze the provided file."""
 
 from dataclasses import dataclass
 from typing import Optional
@@ -27,7 +27,7 @@ class FileContent:
 
 
 class Program:
-    """Analyzes the provided file."""
+    """Analyze the provided file."""
 
     def __init__(
         self,

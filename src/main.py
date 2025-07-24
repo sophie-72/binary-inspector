@@ -1,4 +1,4 @@
-"""Entry point of the binary-inspector project."""
+"""Entry point of the binary-inspector project"""
 
 import sys
 
