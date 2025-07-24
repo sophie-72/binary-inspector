@@ -2,7 +2,7 @@
 
 import sys
 
-from src.models.program import Program
+from src.models import Program
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:

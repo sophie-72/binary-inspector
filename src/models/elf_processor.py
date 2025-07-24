@@ -8,8 +8,7 @@ from elftools.elf.elffile import ELFFile
 
 from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE, ENCODING
 from src.custom_types import AddressToStringMapping
-from src.models.address import Address
-from src.models.instruction import Instruction
+from src.models import Address, Instruction
 
 
 class ELFProcessor:

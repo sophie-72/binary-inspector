@@ -1,7 +1,7 @@
 """Various functions used by different modules"""
 
 from src.constants import RETURN_MNEMONIC
-from src.models.instruction import Instruction
+from src.models import Instruction
 
 
 def is_block_terminator(instruction: Instruction):

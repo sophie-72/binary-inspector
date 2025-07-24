@@ -3,8 +3,7 @@
 from typing import List
 
 
-from src.models.address import Address
-from src.models.instruction import Instruction
+from src.models import Address, Instruction
 
 
 class BasicBlock:

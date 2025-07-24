@@ -3,9 +3,7 @@
 from typing import List
 
 from src.control_flow_graph import identify_basic_blocks
-from src.models.address import Address
-from src.models.basic_block import BasicBlock
-from src.models.instruction import Instruction
+from src.models import Address, BasicBlock, Instruction
 
 
 class Function:
