@@ -1,7 +1,7 @@
 import unittest
 
 from src.models import Instruction
-from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR, ANY_OBJECT
+from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR, ANY_OBJECT, A_STRING
 
 
 class TestInstruction(unittest.TestCase):
@@ -28,8 +28,6 @@ class TestInstruction(unittest.TestCase):
         self.assertNotEqual(self.an_instruction, ANY_OBJECT)
 
     def test_setting_translation(self):
-        a_translation = "some string"
+        self.an_instruction.translation = A_STRING
 
-        self.an_instruction.translation = a_translation
-
-        self.assertEqual(self.an_instruction.translation, a_translation)
+        self.assertEqual(self.an_instruction.translation, A_STRING)
