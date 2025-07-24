@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.constants import SECTION_HEADER_ADDRESS
+from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE
 from src.models.elf_processor import ELFProcessor
 from src.models import Instruction, Address
 from tests.fixtures import ANY_ADDRESS, ANY_NUMBER, A_FUNCTION_NAME, A_STRING
@@ -27,7 +27,7 @@ class TestElfProcessor(unittest.TestCase):
         mock_section = MagicMock()
         mock_section.name = a_section_name
         mock_section.__getitem__.side_effect = lambda key: {
-            "sh_type": "SHT_PROGBITS",
+            SECTION_HEADER_TYPE: "SHT_PROGBITS",
             SECTION_HEADER_ADDRESS: ANY_ADDRESS.value,
         }[key]
         mock_section.data.return_value = some_opcodes

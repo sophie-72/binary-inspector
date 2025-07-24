@@ -6,7 +6,7 @@ from typing import Dict, List
 import capstone  # type: ignore
 from elftools.elf.elffile import ELFFile
 
-from src.constants import SECTION_HEADER_ADDRESS
+from src.constants import SECTION_HEADER_ADDRESS, SECTION_HEADER_TYPE
 from src.models.address import Address
 from src.models.instruction import Instruction
 
@@ -25,7 +25,7 @@ class ELFProcessor:
 
         instructions = {}
         for section in self.elffile.iter_sections():
-            if section["sh_type"] in (
+            if section[SECTION_HEADER_TYPE] in (
                 "SHT_PROGBITS",
                 "SHT_NOBITS",
             ):
