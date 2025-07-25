@@ -22,6 +22,7 @@ This project was an educational exercise in binary analysis, ELF parsing, and co
    ```bash
    pip install -r requirements.txt
    ```
+   **Note**: You also need to install [Graphviz](https://graphviz.org/download/) separately.
 
 ## Usage
 
