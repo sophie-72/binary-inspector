@@ -7,7 +7,7 @@ from tests.fixtures import ANY_ADDRESS, ANY_OP_STR, ANY_MNEMONIC
 
 
 class TestIsBlockTerminator(unittest.TestCase):
-    def test_given_return_instruction_when_checking_if_block_terminator_then_true(self):
+    def test_return_instruction_is_block_terminator(self):
         instruction = Instruction(
             address=ANY_ADDRESS, mnemonic=RETURN_MNEMONIC, op_str=ANY_OP_STR
         )
@@ -16,7 +16,7 @@ class TestIsBlockTerminator(unittest.TestCase):
 
         self.assertTrue(result)
 
-    def test_given_jump_instruction_when_checking_if_block_terminator_then_true(self):
+    def test_jump_instruction_is_block_terminator_(self):
         instruction = Instruction(
             address=ANY_ADDRESS, mnemonic=JUMP_MNEMONIC, op_str=ANY_OP_STR
         )
@@ -25,7 +25,7 @@ class TestIsBlockTerminator(unittest.TestCase):
 
         self.assertTrue(result)
 
-    def test_given_any_other_instruction_when_checking_if_block_terminator_then_false(
+    def test_any_other_instruction_is_not_block_terminator(
         self,
     ):
         instruction = Instruction(

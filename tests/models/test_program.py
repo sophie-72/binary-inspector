@@ -27,7 +27,7 @@ class TestProgram(unittest.TestCase):
         )
         self.program = Program(file_content=file_content)
 
-    def test_no_executable_name_no_file_content_when_creating_a_program_should_raise_runtime_error(
+    def test_no_executable_name_no_file_content_when_creating_a_program_then_raise_runtime_error(
         self,
     ):
         with self.assertRaises(RuntimeError):
