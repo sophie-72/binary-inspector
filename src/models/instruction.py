@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from src.models import Address
+from src.models.address import Address
 
 
 class Instruction:

@@ -1,5 +1,5 @@
 import unittest
-from src.models import Address
+from src.models.address import Address
 from tests.fixtures import ANY_OBJECT
 
 ANY_VALUE = 1

@@ -6,7 +6,9 @@ from src.constants import (
     SECTION_HEADER_TYPE,
     ENCODING,
 )
-from src.models import Instruction, Address, ELFProcessor
+from src.models.address import Address
+from src.models.instruction import Instruction
+from src.models.elf_processor import ELFProcessor
 from tests.fixtures import (
     ANY_ADDRESS,
     ANY_NUMBER,

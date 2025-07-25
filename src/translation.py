@@ -3,7 +3,8 @@
 import re
 
 from src.constants import HEX_ADDRESS_MATCH_PATTERN
-from src.models import Instruction, Address
+from src.models.address import Address
+from src.models.instruction import Instruction
 from src.custom_types import (
     SectionNameToInstructionsMapping,
     InstructionList,

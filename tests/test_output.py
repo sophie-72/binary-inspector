@@ -2,7 +2,8 @@ import unittest
 from unittest.mock import mock_open, patch, MagicMock
 
 from src.constants import ENCODING, TEXT_SECTION_NAME
-from src.models import Instruction, BasicBlock
+from src.models.basic_block import BasicBlock
+from src.models.instruction import Instruction
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
 from tests.fixtures import ANY_ADDRESS, A_FUNCTION_NAME, AN_INSTRUCTION_LIST
 

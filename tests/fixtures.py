@@ -1,5 +1,6 @@
 from src.constants import JUMP_MNEMONIC, RETURN_MNEMONIC, TEXT_SECTION_NAME
-from src.models import Address, Instruction
+from src.models.address import Address
+from src.models.instruction import Instruction
 
 ANY_ADDRESS = Address(0x4)
 ANY_OTHER_ADDRESS = Address(0x5)

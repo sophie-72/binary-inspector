@@ -1,6 +1,6 @@
 import unittest
 
-from src.models import Instruction
+from src.models.instruction import Instruction
 from tests.fixtures import ANY_ADDRESS, ANY_MNEMONIC, ANY_OP_STR, ANY_OBJECT, A_STRING
 
 

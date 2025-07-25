@@ -1,6 +1,6 @@
 import unittest
 
-from src.models import BasicBlock
+from src.models.basic_block import BasicBlock
 from tests.fixtures import (
     ANY_ADDRESS,
     AN_INSTRUCTION_LIST,

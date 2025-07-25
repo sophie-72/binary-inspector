@@ -1,6 +1,7 @@
 import unittest
 
-from src.models import Instruction, Address
+from src.models.address import Address
+from src.models.instruction import Instruction
 from src.translation import translate_instructions
 from tests.fixtures import (
     ANY_ADDRESS,

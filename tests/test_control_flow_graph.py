@@ -2,7 +2,8 @@ import unittest
 
 from src.constants import RETURN_MNEMONIC
 from src.control_flow_graph import identify_basic_blocks
-from src.models import Address, Instruction
+from src.models.address import Address
+from src.models.instruction import Instruction
 from tests.fixtures import (
     AN_INSTRUCTION_LIST,
     ANY_OP_STR,

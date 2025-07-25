@@ -1,6 +1,8 @@
 import unittest
 
-from src.models import Instruction, BasicBlock, Address
+from src.models.address import Address
+from src.models.basic_block import BasicBlock
+from src.models.instruction import Instruction
 from tests.fixtures import ANY_ADDRESS, ANY_OP_STR, ANY_MNEMONIC
 
 

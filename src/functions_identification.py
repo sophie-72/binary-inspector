@@ -7,7 +7,7 @@ from src.custom_types import (
     AddressToStringMapping,
     SectionNameToInstructionsMapping,
 )
-from src.models import Address
+from src.models.address import Address
 from src.models.function import Function
 
 

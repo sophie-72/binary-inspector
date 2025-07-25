@@ -11,7 +11,7 @@ from src.custom_types import (
     SectionNameToInstructionsMapping,
 )
 from src.functions_identification import identify_functions
-from src.models import ELFProcessor
+from src.models.elf_processor import ELFProcessor
 from src.output import write_instructions_to_file, export_all_control_flow_graphs
 from src.translation import translate_instructions
 

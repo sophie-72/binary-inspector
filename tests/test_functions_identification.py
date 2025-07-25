@@ -1,7 +1,7 @@
 import unittest
 
 from src.functions_identification import identify_functions
-from src.models import Address
+from src.models.address import Address
 from src.models.function import Function
 from tests.fixtures import (
     A_FUNCTION_NAME,
